@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  bachelormodelviewcontroller:
+    image: bachelormodelviewcontroller
+    build:
+      context: ./BachelorModelViewController
+      dockerfile: Dockerfile
