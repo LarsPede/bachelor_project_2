@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BachelorModelViewController
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{0C45211A-A673-40A1-A2EB-AD4553F6A343}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BachelorWebAPI", "WebApplication1\BachelorWebAPI.csproj", "{2D3208F2-3B8F-4BB3-9232-7AC121E6FA5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{0C45211A-A673-40A1-A2EB-AD4553F6A343}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C45211A-A673-40A1-A2EB-AD4553F6A343}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C45211A-A673-40A1-A2EB-AD4553F6A343}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D3208F2-3B8F-4BB3-9232-7AC121E6FA5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D3208F2-3B8F-4BB3-9232-7AC121E6FA5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D3208F2-3B8F-4BB3-9232-7AC121E6FA5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D3208F2-3B8F-4BB3-9232-7AC121E6FA5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
