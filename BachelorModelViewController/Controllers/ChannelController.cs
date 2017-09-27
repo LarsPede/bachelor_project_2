@@ -43,12 +43,42 @@ namespace BachelorModelViewController.Controllers
             return new ObjectResult(item);
         }
         
-        // POST: api/Channel
         [HttpPost]
-        public void Post([FromBody]string value)
+        public IActionResult Create([FromBody] Channel item)
         {
+            if (item == null)
+            {
+                return BadRequest();
+            }
+
+            _context.Channels.Add(item);
+            _context.SaveChanges();
+
+            return CreatedAtRoute("GetChannel", new { id = item.ID }, item);
         }
-        
+
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, [FromBody] Channel item)
+        {
+            if(item == null || item.ID != id)
+            {
+                return BadRequest();
+            }
+
+            var channel = _context.Channels.FirstOrDefault(t => t.ID == id);
+
+            if (channel == null)
+            {
+                return NotFound();
+            }
+
+            channel.Name = item.Name;
+
+            _context.Channels.Update(channel);
+            _context.SaveChanges();
+            return new NoContentResult();
+        }
+
         // PUT: api/Channel/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]string value)
@@ -57,8 +87,15 @@ namespace BachelorModelViewController.Controllers
         
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            var channel = _context.Channels.FirstOrDefault(t => t.ID == id);
+
+            if (channel == null) return NotFound();
+
+            _context.Channels.Remove(channel);
+            _context.SaveChanges();
+            return new NoContentResult();
         }
     }
 }
