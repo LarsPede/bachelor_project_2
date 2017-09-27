@@ -8,23 +8,14 @@ namespace BachelorModelViewController.Controllers
 {
     public class PostController : Controller
     {
-        //public IActionResult POST()
-        //{
-        //    return View();
-        //}
 
-        public IActionResult POST(string s)
+        public IActionResult Index(string s)
         {
-            if (string.IsNullOrEmpty(s))
+            if (!string.IsNullOrEmpty(s))
             {
-                ViewData["holder"] = "shits not working";
-                return View();
+                ViewData["debug"] = s;
             }
-            else
-            {
-                ViewData["holder"] = s;
-                return View();
-            }
+            return View();
         }
     }
 }

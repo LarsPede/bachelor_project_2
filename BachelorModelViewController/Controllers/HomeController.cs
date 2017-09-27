@@ -15,18 +15,6 @@ namespace BachelorModelViewController.Controllers
         {
             return View();
         }
-       
-        //public IActionResult post()
-        //{
-        //    PostController pc = new PostController();
-        //    return pc.POST();
-        //}
-        
-        public IActionResult post(string s)
-        {
-            PostController pc = new PostController();
-            return pc.POST(s);
-        }
 
         public IActionResult Error()
         {
