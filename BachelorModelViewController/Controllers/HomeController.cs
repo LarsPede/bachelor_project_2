@@ -10,34 +10,12 @@ namespace BachelorModelViewController.Controllers
 {
     public class HomeController : Controller
     {
-        static HttpClient client = new HttpClient();
-        
-        static async Task<string> GetStringValue()
-        {
-            using (var httpClient = new HttpClient())
-            {
-                return await httpClient.GetStringAsync("http://localhost:12345/api/values/5");
-            }
-        }
 
         public IActionResult Index()
         {
             return View();
         }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = GetStringValue().Result;
-
-            return View();
-        }
+        
 
         public IActionResult Error()
         {
