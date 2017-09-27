@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using BachelorModelViewController.Models;
 
 namespace BachelorModelViewController
 {
@@ -28,6 +30,7 @@ namespace BachelorModelViewController
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+            services.AddDbContext<ChannelContext>(opt => opt.UseInMemoryDatabase("ChannelList"));
             services.AddMvc();
         }
 
