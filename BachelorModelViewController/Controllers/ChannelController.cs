@@ -58,7 +58,7 @@ namespace BachelorModelViewController.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] Channel item)
+        public IActionResult Update(long id, [FromBody] Channel item)
         {
             if(item == null || item.ID != id)
             {
@@ -79,15 +79,9 @@ namespace BachelorModelViewController.Controllers
             return new NoContentResult();
         }
 
-        // PUT: api/Channel/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-        
-        // DELETE: api/ApiWithActions/5
+        // DELETE: api/Channel/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(long id)
         {
             var channel = _context.Channels.FirstOrDefault(t => t.ID == id);
 
