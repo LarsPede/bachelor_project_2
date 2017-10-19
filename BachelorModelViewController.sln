@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BachelorModelViewController
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{0C45211A-A673-40A1-A2EB-AD4553F6A343}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "BusinessDb", "..\Database1\BusinessDb.sqlproj", "{F13F96BA-D6F6-4E88-B8B2-770B96630A60}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,12 @@ Global
 		{0C45211A-A673-40A1-A2EB-AD4553F6A343}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C45211A-A673-40A1-A2EB-AD4553F6A343}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C45211A-A673-40A1-A2EB-AD4553F6A343}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F13F96BA-D6F6-4E88-B8B2-770B96630A60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F13F96BA-D6F6-4E88-B8B2-770B96630A60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F13F96BA-D6F6-4E88-B8B2-770B96630A60}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F13F96BA-D6F6-4E88-B8B2-770B96630A60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F13F96BA-D6F6-4E88-B8B2-770B96630A60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F13F96BA-D6F6-4E88-B8B2-770B96630A60}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

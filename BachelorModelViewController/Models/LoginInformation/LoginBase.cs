@@ -7,6 +7,7 @@ namespace BachelorModelViewController.models.LoginInformation
 {
     public class LoginBase
     {
-        public Tuple<Guid, Guid> Login { get; set; }
+        private Tuple<Guid, Guid> Login { get; set; }
+        public string Email { get; set; }
     }
 }
