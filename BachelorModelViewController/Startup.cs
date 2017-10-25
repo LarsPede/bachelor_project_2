@@ -31,6 +31,9 @@ namespace BachelorModelViewController
         {
             // Add framework services.
             services.AddDbContext<ChannelContext>(opt => opt.UseInMemoryDatabase("ChannelList"));
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
             services.AddMvc();
         }
 
