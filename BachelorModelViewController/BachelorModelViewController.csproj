@@ -27,7 +27,6 @@
 
   <ItemGroup>
     <Folder Include="Data\" />
-    <Folder Include="Models\DataAccess\" />
     <Folder Include="Views\Shared\" />
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\images\" />
