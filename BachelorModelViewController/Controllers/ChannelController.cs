@@ -33,7 +33,7 @@ namespace BachelorModelViewController.Controllers
 
         // GET: api/Channel/5
         [HttpGet("{id}", Name = "GetChannel")]
-        public IActionResult GetById(int id)
+        public IActionResult GetById(Guid id)
         {
             var item = _context.Channels.FirstOrDefault(t => t.ID == id);
             if (item == null)
@@ -58,7 +58,7 @@ namespace BachelorModelViewController.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(long id, [FromBody] Channel item)
+        public IActionResult Update(Guid id, [FromBody] Channel item)
         {
             if(item == null || item.ID != id)
             {
@@ -81,7 +81,7 @@ namespace BachelorModelViewController.Controllers
 
         // DELETE: api/Channel/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(long id)
+        public IActionResult Delete(Guid id)
         {
             var channel = _context.Channels.FirstOrDefault(t => t.ID == id);
 
