@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using BachelorModelViewController.Models;
+using BachelorModelViewController.Data;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace BachelorModelViewController
 {
@@ -31,8 +33,8 @@ namespace BachelorModelViewController
         {
             // Add framework services.
             services.AddDbContext<ChannelContext>(opt => opt.UseInMemoryDatabase("ChannelList"));
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<UserDb>()
                 .AddDefaultTokenProviders();
             services.AddMvc();
         }

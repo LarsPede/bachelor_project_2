@@ -8,9 +8,9 @@ using BachelorModelViewController.Models;
 
 namespace BachelorModelViewController.Data
 {
-    public class UserDbContext : IdentityDbContext<User>
+    public class UserDb : IdentityDbContext<User>
     {
-        public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
+        public UserDb(DbContextOptions<UserDb> options) : base(options)
         {
 
         }
@@ -18,6 +18,8 @@ namespace BachelorModelViewController.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<IdentityUser>().ToTable("Users", "dbo");
+            builder.Entity<User>().ToTable("Users", "dbo");
         }
     }
 }
