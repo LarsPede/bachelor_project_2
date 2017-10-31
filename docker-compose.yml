@@ -1,8 +1,27 @@
-version: '2'
-
+﻿version: '2'
 services:
   bachelormodelviewcontroller:
     image: bachelormodelviewcontroller
+    links:
+      - db
+    environment:
+      ConnectionStrings__Dataconnection: "Host=db;Username=admin;Password=admin123;Database=bachelor"
+    ports:
+      - "8000:80"
     build:
       context: ./BachelorModelViewController
       dockerfile: Dockerfile
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: bachelor
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "31337:5432"
+    volumes:
+      - db-postgres:/var/lib/postgresql/data/pgdata:Z
+volumes:
+  db-postgres:
+    external: true

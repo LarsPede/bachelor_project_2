@@ -14,7 +14,10 @@ namespace BachelorModelViewController.Models
         [Required]
         private Guid Token { get; set; }
         [Required]
-        public string Name { get; set; }
-        public Dictionary<Guid,int> Organization_AuthenticationLevel { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        [Required]
+        [EmailAddress]
+        public override string Email { get; set; }
     }
 }

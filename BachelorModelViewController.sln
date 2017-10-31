@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BachelorModelViewController", "BachelorModelViewController\BachelorModelViewController.csproj", "{C836B13A-F9FA-481C-B861-D4BB1B7124B3}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{0C45211A-A673-40A1-A2EB-AD4553F6A343}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbConnector", "DbConnector\DbConnector.csproj", "{4A653D3D-F11A-482F-AA63-80B5285011D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +21,6 @@ Global
 		{0C45211A-A673-40A1-A2EB-AD4553F6A343}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C45211A-A673-40A1-A2EB-AD4553F6A343}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C45211A-A673-40A1-A2EB-AD4553F6A343}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4A653D3D-F11A-482F-AA63-80B5285011D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4A653D3D-F11A-482F-AA63-80B5285011D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4A653D3D-F11A-482F-AA63-80B5285011D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4A653D3D-F11A-482F-AA63-80B5285011D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
