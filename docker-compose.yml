@@ -5,7 +5,7 @@ services:
     links:
       - db
     environment:
-      ConnectionStrings__Dataconnection: "Host=db;Username=admin;Password=admin123;Database=bachelor"
+      ConnectionStrings__Dataconnection: "Host=db;Username=admin;Password=admin123;Database=cupid"
     ports:
       - "8000:80"
     build:
@@ -16,7 +16,7 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin123
-      POSTGRES_DB: bachelor
+      POSTGRES_DB: cupid
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "31337:5432"
