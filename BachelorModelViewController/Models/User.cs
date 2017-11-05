@@ -12,7 +12,7 @@ namespace BachelorModelViewController.Models
     public class User : IdentityUser
     {
         [Required]
-        private Guid Token { get; set; }
+        public Guid Token { get; set; }
         [Required]
         public string FirstName { get; set; }
         public string LastName { get; set; }

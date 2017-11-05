@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using BachelorModelViewController.Models;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 namespace BachelorModelViewController.Data
 {
@@ -18,6 +19,8 @@ namespace BachelorModelViewController.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            // IdentityUser Mapping
             builder.Entity<User>().ToTable("Users", "dbo");
             builder.Entity<IdentityRole>().ToTable("Roles", "dbo");
             builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
@@ -25,6 +28,10 @@ namespace BachelorModelViewController.Data
             builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
             builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
             builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+
+            // Additional OnModelCreating configurations
+            builder.HasPostgresExtension("uuid-ossp");
+
         }
     }
 }
