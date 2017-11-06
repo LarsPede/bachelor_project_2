@@ -33,5 +33,7 @@ namespace BachelorModelViewController.Data
             builder.HasPostgresExtension("uuid-ossp");
 
         }
+
+        //public virtual DbSet<User> User();
     }
 }
