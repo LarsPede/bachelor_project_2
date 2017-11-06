@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using BachelorModelViewController.Models;
+using Newtonsoft.Json;
 
 namespace BachelorModelViewController.Controllers
 {
@@ -88,6 +90,13 @@ namespace BachelorModelViewController.Controllers
             {
                 return View();
             }
+        }
+
+        public void CreateDatatype(string s)
+        {
+            var jsonObject = JsonConvert.DeserializeObject(s);
+
+            
         }
     }
 }

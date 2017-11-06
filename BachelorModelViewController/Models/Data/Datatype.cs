@@ -5,14 +5,22 @@ using System.Threading.Tasks;
 
 namespace BachelorModelViewController.Models
 {
-    public abstract class Datatype
+    public class Datatype
     {
-        public string name { get { return name; } set { name = value; } }
+        public string name { get; set; }
         public Type  type { get; set; }
+
+        public Datatype() { }
 
         public override string ToString()
         {
             return name + ":" + type.ToString();
+        }
+
+        public void createFromString(string s)
+        {
+            name = "DataStructure";
+            
         }
     }
 }
