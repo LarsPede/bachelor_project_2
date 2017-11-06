@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - BachelorModelViewController</title>
+    <title>@ViewData["Title"] - Cupid</title>
 
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -28,13 +28,15 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">BachelorModelViewController</a>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand"><img class="logo" src="~/images/first_logo.png" /></a>
             </div>
-            <div class="navbar-collapse collapse">
+            <div class="navbar-collapse collapse text-center">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Post" asp-action="Index">Post</a></li>
+                    <li><a asp-area="" asp-controller="Channel" asp-action="Index"><span class="center-block glyphicon glyphicon-cloud"></span>Channels</a></li>
+                    <li><a asp-area="" asp-controller="Group" asp-action="Index"><span class="center-block glyphicon glyphicon-th"></span>Groups</a></li>
+                    <li><a asp-area="" asp-controller="Documentation" asp-action="Index"><span class="center-block glyphicon glyphicon-list-alt"></span>Documentation</a></li>
                 </ul>
+                @await Html.PartialAsync("_LoginPartial")
             </div>
         </div>
     </nav>
