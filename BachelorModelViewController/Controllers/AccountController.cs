@@ -106,7 +106,7 @@ namespace BachelorModelViewController.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new User { UserName = model.Email, Email = model.Email, Token = new Guid() };
+                var user = new User { UserName = model.Email, FirstName = model.FirstName, LastName = model.LastName, Email = model.Email, Token = new Guid() };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

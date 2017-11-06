@@ -8,6 +8,16 @@ namespace BachelorModelViewController.Models.ViewModels.AccountViewModels
 {
     public class RegisterViewModel
     {
+
+        [Required]
+        [DataType(DataType.Text)]
+        [Display(Name = "Fornavn")]
+        public string FirstName { get; set; }
+
+        [DataType(DataType.Text)]
+        [Display(Name = "Efternavn")]
+        public string LastName { get; set; }
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
