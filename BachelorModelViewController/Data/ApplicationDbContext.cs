@@ -29,9 +29,16 @@ namespace BachelorModelViewController.Data
             builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
             builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
 
+            // Mapping DbSets to dbo
+            builder.Entity<Group>().ToTable("Groups", "dbo");
+            builder.Entity<Association>().ToTable("Associations", "dbo");
+
             // Additional OnModelCreating configurations
             builder.HasPostgresExtension("uuid-ossp");
 
         }
+
+        public virtual DbSet<Group> Groups { get; set; }
+        public virtual DbSet<Association> Associations { get; set; }
     }
 }

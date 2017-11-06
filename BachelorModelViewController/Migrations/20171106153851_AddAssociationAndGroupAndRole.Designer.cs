@@ -8,9 +8,10 @@ using BachelorModelViewController.Data;
 namespace BachelorModelViewController.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171106153851_AddAssociationAndGroupAndRole")]
+    partial class AddAssociationAndGroupAndRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("Npgsql:PostgresExtension:uuid-ossp", "'uuid-ossp', '', ''")
@@ -36,7 +37,7 @@ namespace BachelorModelViewController.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Associations","dbo");
+                    b.ToTable("Associations");
                 });
 
             modelBuilder.Entity("BachelorModelViewController.Models.Group", b =>
@@ -49,7 +50,7 @@ namespace BachelorModelViewController.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Groups","dbo");
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("BachelorModelViewController.Models.User", b =>
