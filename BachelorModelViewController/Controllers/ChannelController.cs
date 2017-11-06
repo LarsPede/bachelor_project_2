@@ -1,95 +1,93 @@
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using BachelorModelViewController.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
-//namespace BachelorModelViewController.Controllers
-//{
-//    [Produces("application/json")]
-//    [Route("api/Channel")]
-//    public class ChannelController : Controller
-//    {
-//        private readonly ChannelContext _context;
+namespace BachelorModelViewController.Controllers
+{
+    public class ChannelController : Controller
+    {
+        // GET: Channel
+        public ActionResult Index()
+        {
+            return View();
+        }
 
-//        public ChannelController(ChannelContext context)
-//        {
-//            _context = context;
+        // GET: Channel/Details/5
+        public ActionResult Details(int id)
+        {
+            return View();
+        }
 
-//            if(_context.Channels.Count() == 0)
-//            {
-//                _context.Channels.Add(new Channel { Name = "SimpleChannel" });
-//                _context.SaveChanges();
-//            }
-//        }
-//        // GET: api/Channel
-//        [HttpGet]
-//        public IEnumerable<Channel> GetAll()
-//        {
-//            return _context.Channels.ToList();
-//        }
+        // GET: Channel/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
 
-//        // GET: api/Channel/5
-//        [HttpGet("{id}", Name = "GetChannel")]
-//        public IActionResult GetById(Guid id)
-//        {
-//            var item = _context.Channels.FirstOrDefault(t => t.ID == id);
-//            if (item == null)
-//            {
-//                return NotFound();
-//            }
-//            return new ObjectResult(item);
-//        }
-        
-//        [HttpPost]
-//        public IActionResult Create([FromBody] Channel item)
-//        {
-//            if (item == null)
-//            {
-//                return BadRequest();
-//            }
+        // POST: Channel/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(IFormCollection collection)
+        {
+            try
+            {
+                // TODO: Add insert logic here
 
-//            _context.Channels.Add(item);
-//            _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View();
+            }
+        }
 
-//            return CreatedAtRoute("GetChannel", new { id = item.ID }, item);
-//        }
+        // GET: Channel/Edit/5
+        public ActionResult Edit(int id)
+        {
+            return View();
+        }
 
-//        [HttpPut("{id}")]
-//        public IActionResult Update(Guid id, [FromBody] Channel item)
-//        {
-//            if(item == null || item.ID != id)
-//            {
-//                return BadRequest();
-//            }
+        // POST: Channel/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, IFormCollection collection)
+        {
+            try
+            {
+                // TODO: Add update logic here
 
-//            var channel = _context.Channels.FirstOrDefault(t => t.ID == id);
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View();
+            }
+        }
 
-//            if (channel == null)
-//            {
-//                return NotFound();
-//            }
+        // GET: Channel/Delete/5
+        public ActionResult Delete(int id)
+        {
+            return View();
+        }
 
-//            channel.Name = item.Name;
+        // POST: Channel/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            try
+            {
+                // TODO: Add delete logic here
 
-//            _context.Channels.Update(channel);
-//            _context.SaveChanges();
-//            return new NoContentResult();
-//        }
-
-//        // DELETE: api/Channel/5
-//        [HttpDelete("{id}")]
-//        public IActionResult Delete(Guid id)
-//        {
-//            var channel = _context.Channels.FirstOrDefault(t => t.ID == id);
-
-//            if (channel == null) return NotFound();
-
-//            _context.Channels.Remove(channel);
-//            _context.SaveChanges();
-//            return new NoContentResult();
-//        }
-//    }
-//}
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View();
+            }
+        }
+    }
+}
