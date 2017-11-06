@@ -1,4 +1,9 @@
-﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+﻿@using Microsoft.AspNetCore.Identity
+@using BachelorModelViewController.Models
+
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,7 +38,10 @@
             <div class="navbar-collapse collapse text-center">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Channel" asp-action="Index"><span class="center-block glyphicon glyphicon-cloud"></span>Channels</a></li>
-                    <li><a asp-area="" asp-controller="Group" asp-action="Index"><span class="center-block glyphicon glyphicon-th"></span>Groups</a></li>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <li><a asp-area="" asp-controller="Group" asp-action="Index"><span class="center-block glyphicon glyphicon-th"></span>Groups</a></li>
+                    }
                     <li><a asp-area="" asp-controller="Documentation" asp-action="Index"><span class="center-block glyphicon glyphicon-list-alt"></span>Documentation</a></li>
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
