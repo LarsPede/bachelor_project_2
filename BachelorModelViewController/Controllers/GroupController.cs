@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BachelorModelViewController.Controllers
 {
+    [Authorize]
     public class GroupController : Controller
     {
         // GET: Group

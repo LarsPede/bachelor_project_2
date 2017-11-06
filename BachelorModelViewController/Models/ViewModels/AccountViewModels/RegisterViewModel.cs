@@ -11,11 +11,11 @@ namespace BachelorModelViewController.Models.ViewModels.AccountViewModels
 
         [Required]
         [DataType(DataType.Text)]
-        [Display(Name = "Fornavn")]
+        [Display(Name = "First Name")]
         public string FirstName { get; set; }
 
         [DataType(DataType.Text)]
-        [Display(Name = "Efternavn")]
+        [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
         [Required]
