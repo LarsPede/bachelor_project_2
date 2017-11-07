@@ -5,12 +5,27 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using BachelorModelViewController.Models.ViewModels.GroupViewModels;
+using BachelorModelViewController.Models;
+using BachelorModelViewController.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace BachelorModelViewController.Controllers
 {
     [Authorize]
     public class GroupController : Controller
     {
+        private readonly ApplicationDbContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<User> _userManager;
+
+        public GroupController(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
+        {
+            _context = context;
+            _roleManager = roleManager;
+            _userManager = userManager;
+        }
         // GET: Group
         public ActionResult Index()
         {
@@ -32,15 +47,25 @@ namespace BachelorModelViewController.Controllers
         // POST: Group/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(CreateViewModel model)
         {
             try
             {
-                // TODO: Add insert logic here
+
+                if (ModelState.IsValid)
+                {
+                    var group = new Group { Name = model.GroupName};
+                    _context.Groups.Add(group);
+                    var user = await _userManager.GetUserAsync(HttpContext.User);
+                    var role = await _roleManager.FindByNameAsync("Administrator");
+                    var association = new Association { GroupId = group.Id, UserId = user.Id, RoleId = role.Id };
+                    _context.Associations.Add(association);
+                    _context.SaveChanges();
+                }
 
                 return RedirectToAction("Index");
             }
-            catch
+            catch(Exception e)
             {
                 return View();
             }

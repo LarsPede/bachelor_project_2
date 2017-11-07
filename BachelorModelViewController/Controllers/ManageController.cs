@@ -40,10 +40,7 @@ namespace BachelorModelViewController.Controllers
                 ViewData["StatusMessage"] =
                     message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
                     : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                    : message == ManageMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
                     : message == ManageMessageId.Error ? "An error has occurred."
-                    : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
-                    : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
                     : "";
 
                 var user = await GetCurrentUserAsync();
@@ -54,10 +51,7 @@ namespace BachelorModelViewController.Controllers
                 var model = new IndexViewModel
                 {
                     HasPassword = await _userManager.HasPasswordAsync(user),
-                    PhoneNumber = await _userManager.GetPhoneNumberAsync(user),
-                    TwoFactor = await _userManager.GetTwoFactorEnabledAsync(user),
-                    Logins = await _userManager.GetLoginsAsync(user),
-                    BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user)
+                    Logins = await _userManager.GetLoginsAsync(user)
                 };
                 return View(model);
             }
@@ -142,13 +136,10 @@ namespace BachelorModelViewController.Controllers
 
             public enum ManageMessageId
             {
-                AddPhoneSuccess,
                 AddLoginSuccess,
                 ChangePasswordSuccess,
-                SetTwoFactorSuccess,
                 SetPasswordSuccess,
                 RemoveLoginSuccess,
-                RemovePhoneSuccess,
                 Error
             }
 

@@ -1,95 +1,104 @@
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using BachelorModelViewController.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using BachelorModelViewController.Models;
+using BachelorModelViewController.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-//namespace BachelorModelViewController.Controllers
-//{
-//    [Produces("application/json")]
-//    [Route("api/Channel")]
-//    public class ChannelController : Controller
-//    {
-//        private readonly ChannelContext _context;
+namespace BachelorModelViewController.Controllers
+{
+    [Produces("application/json")]
+    [Route("api/Channel")]
+    public class APIController : Controller
+    {
 
-//        public ChannelController(ChannelContext context)
-//        {
-//            _context = context;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<User> _userManager;
+        private readonly ApplicationDbContext _context;
 
-//            if(_context.Channels.Count() == 0)
-//            {
-//                _context.Channels.Add(new Channel { Name = "SimpleChannel" });
-//                _context.SaveChanges();
-//            }
-//        }
-//        // GET: api/Channel
-//        [HttpGet]
-//        public IEnumerable<Channel> GetAll()
-//        {
-//            return _context.Channels.ToList();
-//        }
+        public APIController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        {
+            _context = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
 
-//        // GET: api/Channel/5
-//        [HttpGet("{id}", Name = "GetChannel")]
-//        public IActionResult GetById(Guid id)
-//        {
-//            var item = _context.Channels.FirstOrDefault(t => t.ID == id);
-//            if (item == null)
-//            {
-//                return NotFound();
-//            }
-//            return new ObjectResult(item);
-//        }
-        
-//        [HttpPost]
-//        public IActionResult Create([FromBody] Channel item)
-//        {
-//            if (item == null)
-//            {
-//                return BadRequest();
-//            }
+        }
+        // GET: api/Groups
+        [HttpGet]
+        public IEnumerable<Group> GetAll()
+        {
+            return _context.Groups.ToList();
+        }
 
-//            _context.Channels.Add(item);
-//            _context.SaveChanges();
+        // GET: api/Group/5
+        [HttpGet("{id}", Name = "GetGroup")]
+        public IActionResult GetGroupById(int id)
+        {
+            var group = _context.Groups.FirstOrDefault(t => t.Id == id);
+            if (group == null)
+            {
+                return NotFound();
+            }
+            return new ObjectResult(group);
+        }
 
-//            return CreatedAtRoute("GetChannel", new { id = item.ID }, item);
-//        }
+        [HttpPost]
+        public async Task<ActionResult> CreateGroupAsync([FromBody] Group item)
+        {
+            if (item == null)
+            {
+                return BadRequest();
+            }
 
-//        [HttpPut("{id}")]
-//        public IActionResult Update(Guid id, [FromBody] Channel item)
-//        {
-//            if(item == null || item.ID != id)
-//            {
-//                return BadRequest();
-//            }
+            _context.Groups.Add(item);
+            string userId =  (await _userManager.GetUserAsync(HttpContext.User))?.Id;
+            string roleId = (await _roleManager.FindByNameAsync("Administrator"))?.Id;
+            var association = new Association { GroupId = item.Id, UserId = userId, RoleId = roleId };
+            _context.Associations.Add(association);
+            _context.SaveChanges();
 
-//            var channel = _context.Channels.FirstOrDefault(t => t.ID == id);
+            return CreatedAtRoute("GetGroup", new { id = item.Id }, item);
+        }
 
-//            if (channel == null)
-//            {
-//                return NotFound();
-//            }
+        [HttpPut("{id}")]
+        public IActionResult UpdateGroup(int id, [FromBody] Group item)
+        {
+            if (item == null || item.Id != id)
+            {
+                return BadRequest();
+            }
 
-//            channel.Name = item.Name;
+            var group = _context.Groups.FirstOrDefault(t => t.Id == id);
 
-//            _context.Channels.Update(channel);
-//            _context.SaveChanges();
-//            return new NoContentResult();
-//        }
+            if (group == null)
+            {
+                return NotFound();
+            }
 
-//        // DELETE: api/Channel/5
-//        [HttpDelete("{id}")]
-//        public IActionResult Delete(Guid id)
-//        {
-//            var channel = _context.Channels.FirstOrDefault(t => t.ID == id);
+            group.Name = item.Name;
 
-//            if (channel == null) return NotFound();
+            _context.Groups.Update(group);
+            _context.SaveChanges();
+            return new NoContentResult();
+        }
 
-//            _context.Channels.Remove(channel);
-//            _context.SaveChanges();
-//            return new NoContentResult();
-//        }
-//    }
-//}
+        // DELETE: api/Group/5
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var group = _context.Groups.FirstOrDefault(t => t.Id == id);
+
+            if (group == null) return NotFound();
+
+            _context.Groups.Remove(group);
+            _context.SaveChanges();
+            return new NoContentResult();
+        }
+
+        private Task<User> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
+    }
+}
