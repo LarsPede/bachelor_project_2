@@ -7,5 +7,6 @@ namespace BachelorModelViewController.Models.ViewModels.GroupViewModels
 {
     public class MemberGroupsViewModel
     {
+        public IEnumerable<Group> Groups { get; set; }
     }
 }
