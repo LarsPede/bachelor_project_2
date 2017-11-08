@@ -20,10 +20,10 @@ namespace BachelorModelViewController.Data
 
             var roles = new IdentityRole[]
             {
-                new IdentityRole{Name="God"},
-                new IdentityRole{Name="Administrator"},
-                new IdentityRole{Name="Supplier"},
-                new IdentityRole{Name="Consumer"}
+                new IdentityRole{Name="God", NormalizedName="GOD"},
+                new IdentityRole{Name="Administrator", NormalizedName="ADMINISTRATOR"},
+                new IdentityRole{Name="Supplier", NormalizedName="SUPPLIER"},
+                new IdentityRole{Name="Consumer", NormalizedName="CONSUMER"}
             };
             foreach (IdentityRole role in roles)
             {
