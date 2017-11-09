@@ -29,7 +29,14 @@ namespace BachelorModelViewController.Controllers
         // GET: Group
         public ActionResult Index()
         {
-            return View();
+            var user = _userManager.GetUserAsync(HttpContext.User);
+            var associations = _context.Associations.Where(x => x.UserId == user.Result.Id).ToList();
+            foreach (var association in associations)
+            {
+
+            }
+            var groups = _context.Groups.ToList();
+            return View(groups);
         }
 
         // GET: Group/Details/5
