@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using BachelorModelViewController.Models;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
+using BachelorModelViewController.Models.ViewModels.GroupViewModels;
 
 namespace BachelorModelViewController.Data
 {
@@ -40,5 +41,7 @@ namespace BachelorModelViewController.Data
 
         public virtual DbSet<Group> Groups { get; set; }
         public virtual DbSet<Association> Associations { get; set; }
+        public DbSet<BachelorModelViewController.Models.ViewModels.GroupViewModels.GroupViewModel> GroupViewModel { get; set; }
+        public DbSet<BachelorModelViewController.Models.ViewModels.GroupViewModels.NonMemberGroupsViewModel> NonMemberGroupsViewModel { get; set; }
     }
 }

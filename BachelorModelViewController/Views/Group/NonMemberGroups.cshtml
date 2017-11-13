@@ -1,0 +1,30 @@
+@using BachelorModelViewController.Models.ViewModels.GroupViewModels
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
+@inject RoleManager<IdentityRole> roleManager
+
+@model IEnumerable<NonMemberGroupsViewModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.GroupName)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.GroupName)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                <a asp-action="ApplyGroup" asp-route-id="@item.Id" >Apply</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,36 @@
+@using BachelorModelViewController.Models.ViewModels.GroupViewModels
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
+@inject RoleManager<IdentityRole> roleManager
+
+@model DetailViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>View</h2>
+
+<div>
+    <h4>GroupViewModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dd>
+            @if (Model.RoleId == roleManager.FindByNameAsync("Administrator").Result.Id) {
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span></a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></a>
+    }
+        </dd>
+    </dl>
+</div>
+<div>
+
+    <a asp-action="Index">Back to List</a>
+</div>
