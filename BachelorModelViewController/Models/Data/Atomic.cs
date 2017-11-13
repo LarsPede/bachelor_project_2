@@ -45,6 +45,7 @@ namespace BachelorModelViewController.Models
             }
             if(DateTime.TryParse(val, out Datetime))
             {
+
                 return Datetime;
             }
             return val;
