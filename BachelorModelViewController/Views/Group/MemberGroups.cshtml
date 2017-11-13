@@ -1,15 +1,20 @@
-@using BachelorModelViewController.Models
+@using BachelorModelViewController.Models.ViewModels.GroupViewModels
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-@model IEnumerable<Group>
+@inject RoleManager<IdentityRole> roleManager
+
+@model IEnumerable<MemberGroupsViewModel>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-default">Create a new Group</a>
+    <a asp-action="Apply" class="btn btn-default">Apply to a Group</a>
 </p>
-<table class="table">
+<table class="table table-responsive">
     <thead>
         <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Name)
+                    Name
                 </th>
             <th></th>
         </tr>
@@ -18,12 +23,14 @@
         @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.GroupName)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            <td class="pull-right">
+                @if (item.RoleId == roleManager.FindByNameAsync("Administrator").Result.Id) {
+                    <a asp-action="Edit" asp-route-id="@item.GroupId" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span></a>
+                    <a asp-action="Delete" asp-route-id="@item.GroupId" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></a>
+                }
+                <a asp-action="Details" asp-route-id="@item.GroupId" class="btn btn-default"><span class="glyphicon glyphicon-zoom-in"></span></a> 
             </td>
         </tr>
         }

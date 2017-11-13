@@ -30,12 +30,11 @@ namespace BachelorModelViewController.Controllers
         public ActionResult Index()
         {
             var user = _userManager.GetUserAsync(HttpContext.User);
-            var associations = _context.Associations.Where(x => x.UserId == user.Result.Id).ToList();
-            foreach (var association in associations)
-            {
-
-            }
-            var groups = _context.Groups.ToList();
+            var groups =
+                from Group in _context.Groups
+                join Association in _context.Associations on Group.Id equals Association.GroupId
+                select new MemberGroupsViewModel { GroupId = Group.Id, UserId = Association.UserId, GroupName = Group.Name, RoleId = Association.RoleId };
+            groups = groups.Where(x => x.UserId == user.Result.Id).ToList().AsQueryable();
             return View(groups);
         }
 
