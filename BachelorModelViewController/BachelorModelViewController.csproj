@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\Data\" />
     <Folder Include="Models\ViewModels\AccountViewModels\" />
     <Folder Include="Models\ViewModels\ManageViewModels\" />
     <Folder Include="Views\Account\" />
