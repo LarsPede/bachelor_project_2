@@ -13,7 +13,7 @@
 
 <form asp-action="Edit">
     <div class="form-horizontal">
-        <h4>GroupViewModel</h4>
+        <h4>Group</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="Id" />
@@ -32,6 +32,8 @@
     </div>
 </form>
 
+@if (Model.ApplyingMembers.Any())
+{
 <table class="table table-responsive">
     <thead>
         <tr>
@@ -49,13 +51,16 @@
                 @Html.DisplayFor(modelItem => item.User.FirstName) @Html.DisplayFor(modelItem => item.User.LastName)
             </td>
             <td class="pull-right">
-                <a class="btn btn-success"><span class="glyphicon glyphicon-thumbs-up"></span></a>
-                <a class="btn btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span></a>
+                <a asp-action="Approve" asp-route-id="@item.User.Id" asp-route-groupId="@item.GroupId" class="btn btn-success" ><span class="glyphicon glyphicon-thumbs-up"></span></a>
+                <a asp-action="Deny" asp-route-id="@item.User.Id" asp-route-groupId="@item.GroupId" class="btn btn-danger" ><span class="glyphicon glyphicon-thumbs-down"></span></a>
             </td>
         </tr>
         }
     </tbody>
 </table>
+}
+@if (Model.Members.Any())
+{
 <table class="table table-responsive">
     <thead>
         <tr>
@@ -79,12 +84,25 @@
                     @Html.DisplayFor(modelItem => roleManager.FindByIdAsync(item.RoleId).Result.Name)
                 </td>
                 <td class="pull-right">
-                    @Html.DropDownList("Roles", new SelectList(roleManager.Roles.Where(x => x.Name != "God"), "Name", "Name", roleManager.FindByIdAsync(item.RoleId).Result.Name), String.Empty)
+                    <form method="post" asp-action="RoleChange" asp-route-id="@item.GroupId">
+                        @Html.DropDownListFor(
+                        model => model.RoleName,
+                        new SelectList(
+                            roleManager.Roles.Where(x => x.Name != "God"),
+                            "Name",
+                            "Name",
+                            roleManager.FindByIdAsync(item.RoleId).Result.Name),
+                        "Roles...",
+                        new { @onchange = "this.form.submit()" })
+                        <input id="UserId" name="UserId" type="hidden" value="@item.User.Id">
+                    </form>
+                    <a asp-action="Deny" asp-route-id="@item.User.Id" asp-route-groupId="@item.GroupId" class="btn btn-danger" style="height: 30px;"><span class="glyphicon glyphicon-remove"></span></a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+}
 
 <div>
     <a asp-action="Index">Back to List</a>

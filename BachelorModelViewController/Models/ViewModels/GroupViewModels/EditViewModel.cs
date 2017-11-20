@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,5 +16,7 @@ namespace BachelorModelViewController.Models.ViewModels.GroupViewModels
         public string GroupName { get; set; }
         public IEnumerable<MemberViewModel> Members { get; set; }
         public IEnumerable<MemberViewModel> ApplyingMembers { get; set; }
+        public string UserId { get; set; }
+        public string RoleName { get; set; }
     }
 }

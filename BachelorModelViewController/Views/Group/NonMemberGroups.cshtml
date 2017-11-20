@@ -21,8 +21,9 @@
                 @Html.DisplayFor(modelItem => item.GroupName)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                <a asp-action="ApplyGroup" asp-route-id="@item.Id" >Apply</a>
+                <a class="pull-right" asp-action="ApplyGroup" asp-route-id="@item.Id">Apply</a>
+                <span class="pull-right">&nbsp;|&nbsp;</span>
+                <a class="pull-right" asp-action="Details" asp-route-id="@item.Id">Details</a>
             </td>
         </tr>
 }
