@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using BachelorModelViewController.Models;
+using BachelorModelViewController.Models.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 namespace BachelorModelViewController.Data
@@ -32,6 +33,9 @@ namespace BachelorModelViewController.Data
             // Mapping DbSets to dbo
             builder.Entity<Group>().ToTable("Groups", "dbo");
             builder.Entity<Association>().ToTable("Associations", "dbo");
+            builder.Entity<Channel>().ToTable("Channels", "dbo");
+            builder.Entity<DatatypeModel>().ToTable("Datatypes", "dbo");
+
 
             // Additional OnModelCreating configurations
             builder.HasPostgresExtension("uuid-ossp");
@@ -40,5 +44,7 @@ namespace BachelorModelViewController.Data
 
         public virtual DbSet<Group> Groups { get; set; }
         public virtual DbSet<Association> Associations { get; set; }
+        public virtual DbSet<Channel> Channels { get; set; }
+        public virtual DbSet<DatatypeModel> Datatypes { get; set; }
     }
 }

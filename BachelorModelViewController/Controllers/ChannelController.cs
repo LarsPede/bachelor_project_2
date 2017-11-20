@@ -5,15 +5,51 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BachelorModelViewController.Models;
+using BachelorModelViewController.Models.ViewModels.DataViewModels;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity;
+using BachelorModelViewController.Data;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace BachelorModelViewController.Controllers
 {
     public class ChannelController : Controller
     {
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<User> _userManager;
+        private readonly ApplicationDbContext _context; 
+        
+        public ChannelController(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
+        {
+            _context = context;
+            _roleManager = roleManager;
+            _userManager = userManager;
+        }
+
         // GET: Channel
         public ActionResult Index()
         {
+            var currentUser = _userManager.GetUserAsync(HttpContext.User);
+
+            //var accessibleChannels = from Channels in _context.Channels ;
+
+            var asssociations = from Channels in _context.Channels
+                                join Associations in _context.Associations on Channels.Group equals Associations.GroupId into Association
+                                from joined in Association
+                                where joined.
+
+
+
+    //        var innerGroupJoinQuery2 =
+    //from category in categories
+    //join prod in products on category.ID equals prod.CategoryID into prodGroup
+    //from prod2 in prodGroup
+    //where prod2.UnitPrice > 2.50M
+    //select prod2;
+            )
+                                
+                                     
+
             return View();
         }
 

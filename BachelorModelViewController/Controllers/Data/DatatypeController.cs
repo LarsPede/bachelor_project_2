@@ -5,14 +5,26 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BachelorModelViewController.Models.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using BachelorModelViewController.Data;
+using BachelorModelViewController.Models;
 
 namespace BachelorModelViewController.Controllers.Data
 {
     public class DatatypeController : Controller
     {
+
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<User> _userManager;
+        private readonly ApplicationDbContext _context;
+
         // GET: Datatype
         public ActionResult Index()
         {
+            
+
+
             return View();
         }
 
