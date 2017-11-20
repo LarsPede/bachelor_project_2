@@ -12,13 +12,13 @@ namespace BachelorModelViewController.Models
     public class Association
     {
         public int Id { get; set; }
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
         [ForeignKey("UserId")]
         public User User { get; set; }
         public int GroupId { get; set; }
         [ForeignKey("GroupId")]
         public Group Group { get; set; }
-        public string RoleId { get; set; }
+        public Guid RoleId { get; set; }
         [ForeignKey("RoleId")]
         public IdentityRole Role { get; set; }
 
