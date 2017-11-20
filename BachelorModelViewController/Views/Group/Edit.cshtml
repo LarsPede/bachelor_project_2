@@ -83,8 +83,9 @@
                 <td>
                     @Html.DisplayFor(modelItem => roleManager.FindByIdAsync(item.RoleId).Result.Name)
                 </td>
-                <td class="pull-right">
-                    <form method="post" asp-action="RoleChange" asp-route-id="@item.GroupId">
+                <td>
+                    <a asp-action="Deny" asp-route-id="@item.User.Id" asp-route-groupId="@item.GroupId" class="btn btn-danger pull-right" style="height: 30px;"><span class="glyphicon glyphicon-remove"></span></a>
+                    <form method="post" asp-action="RoleChange" asp-route-id="@item.GroupId" class="pull-right">
                         @Html.DropDownListFor(
                         model => model.RoleName,
                         new SelectList(
@@ -93,11 +94,10 @@
                             "Name",
                             roleManager.FindByIdAsync(item.RoleId).Result.Name),
                         "Roles...",
-                        new { @onchange = "this.form.submit()" })
+                        new { @onchange = "this.form.submit()", @style= "height: 30px; margin: 0 8px 0 0" })
                         <input id="UserId" name="UserId" type="hidden" value="@item.User.Id">
                     </form>
-                    <a asp-action="Deny" asp-route-id="@item.User.Id" asp-route-groupId="@item.GroupId" class="btn btn-danger" style="height: 30px;"><span class="glyphicon glyphicon-remove"></span></a>
-                </td>
+                    </td>
             </tr>
         }
     </tbody>

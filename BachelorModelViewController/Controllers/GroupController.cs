@@ -86,14 +86,14 @@ namespace BachelorModelViewController.Controllers
         public ActionResult Edit(int id)
         {
             var currUser = _userManager.GetUserAsync(HttpContext.User);
-            var adminRole = _roleManager.FindByNameAsync("Administrator").Result;
+            var adminRole = _roleManager.FindByNameAsync("Administrator");
             var members =
                 from User in _context.Users
                 join Association in _context.Associations on User.Id equals Association.UserId
                 select new MemberViewModel { User = User, GroupId = Association.GroupId, RoleId = Association.RoleId };
             var applyingMembers = members.Where(x => x.GroupId == id).Where(x => x.RoleId == null).ToList().AsQueryable();
             members = members.Where(x => x.GroupId == id).Where(x => x.RoleId != null).ToList().AsQueryable();
-            if (!(members.Where(x => x.User.Id == currUser.Result.Id).Where(x => x.RoleId == adminRole.Id).Any()))
+            if (!(members.Where(x => x.User.Id == currUser.Result.Id).Where(x => x.RoleId == adminRole.Result.Id).Any()))
             {
                 return RedirectToAction("Index");
             }
