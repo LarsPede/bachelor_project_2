@@ -10,6 +10,7 @@ using BachelorModelViewController.Models;
 using BachelorModelViewController.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BachelorModelViewController.Controllers
 {
@@ -27,7 +28,7 @@ namespace BachelorModelViewController.Controllers
             _userManager = userManager;
         }
         // GET: Group
-        public ActionResult Index()
+        public ActionResult Index(string errorMessage)
         {
             var user = _userManager.GetUserAsync(HttpContext.User);
             var groups =
@@ -35,13 +36,17 @@ namespace BachelorModelViewController.Controllers
                 join Association in _context.Associations on Group.Id equals Association.GroupId
                 select new MemberGroupsViewModel { GroupId = Group.Id, UserId = Association.UserId, GroupName = Group.Name, RoleId = Association.RoleId };
             groups = groups.Where(x => x.UserId == user.Result.Id).ToList().AsQueryable();
+            ViewBag.ErrorMessage = errorMessage;
             return View(groups);
         }
 
         // GET: Group/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var user = _userManager.GetUserAsync(HttpContext.User);
+            var association = _context.Associations.Where(x => x.GroupId == id).Where(x => x.UserId == user.Result.Id).FirstOrDefault();
+            var group = _context.Groups.Where(x => x.Id == id).Select(x => new DetailViewModel() { Id = x.Id, Name = x.Name, RoleId = association.RoleId }).FirstOrDefault();
+            return View(group);
         }
 
         // GET: Group/Create
@@ -80,18 +85,33 @@ namespace BachelorModelViewController.Controllers
         // GET: Group/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var currUser = _userManager.GetUserAsync(HttpContext.User);
+            var adminRole = _roleManager.FindByNameAsync("Administrator").Result;
+            var members =
+                from User in _context.Users
+                join Association in _context.Associations on User.Id equals Association.UserId
+                select new MemberViewModel { User = User, GroupId = Association.GroupId, RoleId = Association.RoleId };
+            var applyingMembers = members.Where(x => x.GroupId == id).Where(x => x.RoleId == null).ToList().AsQueryable();
+            members = members.Where(x => x.GroupId == id).Where(x => x.RoleId != null).ToList().AsQueryable();
+            if (!(members.Where(x => x.User.Id == currUser.Result.Id).Where(x => x.RoleId == adminRole.Id).Any()))
+            {
+                return RedirectToAction("Index");
+            }
+            var group = _context.Groups.Where(x => x.Id == id).Select(x => new EditViewModel() { Id = x.Id, GroupName = x.Name, Members = members, ApplyingMembers = applyingMembers }).FirstOrDefault();
+            
+
+            return View(group);
         }
 
         // POST: Group/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, GroupViewModel collection)
         {
             try
             {
-                // TODO: Add update logic here
-
+                _context.Groups.Where(x => x.Id == id).FirstOrDefault().Name = collection.Name;
+                _context.SaveChanges();
                 return RedirectToAction("Index");
             }
             catch
@@ -120,6 +140,77 @@ namespace BachelorModelViewController.Controllers
             catch
             {
                 return View();
+            }
+        }
+
+        // GET: Group/Apply
+        public ActionResult Apply(string id, int groupId)
+        {
+            var user = _userManager.GetUserAsync(HttpContext.User);
+            var groups =
+                from Group in _context.Groups
+                join Association in _context.Associations on Group.Id equals Association.GroupId
+                select new NonMemberGroupsViewModel { Id = Group.Id, UserId = Association.UserId, GroupName = Group.Name };
+            groups = groups.Where(x => x.UserId == user.Result.Id).ToList().AsQueryable();
+            var allGroups = _context.Groups.ToList();
+            allGroups.RemoveAll(x => groups.Any(y => y.Id == x.Id));
+            var wantedGroup = allGroups.Select(x => new NonMemberGroupsViewModel() { Id = x.Id, GroupName = x.Name }).ToList();
+            return View(wantedGroup);
+        }
+
+        // Get: Group/Apply/1
+        public ActionResult ApplyGroup(int id)
+        {
+            try
+            {
+                var user = _userManager.GetUserAsync(HttpContext.User).Result;
+                var role = _roleManager.FindByNameAsync("Administrator").Result;
+                var association = new Association { GroupId = id, UserId = user.Id };
+                _context.Associations.Add(association);
+                _context.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception e)
+            {
+                return View();
+            }
+        }
+
+        // GET: Group/Approve/1/1
+        public ActionResult Approve(string id, int groupId)
+        {
+            var role = _roleManager.FindByNameAsync("Consumer").Result;
+            _context.Associations.Where(x => x.UserId == id && x.GroupId == groupId).FirstOrDefault().RoleId = role.Id;
+            _context.SaveChangesAsync();
+            return RedirectToAction("Edit", new { id = groupId });
+        }
+
+        // GET: Group/Deny/123-123-123/1
+        public ActionResult Deny(string id, int groupId)
+        {
+            Association association = _context.Associations.Where(x => x.UserId == id && x.GroupId == groupId).FirstOrDefault();
+            _context.Associations.Remove(association);
+            _context.SaveChangesAsync();
+            return RedirectToAction("Edit", new { id = groupId });
+        }
+
+
+        // POST: Group/RoleChange/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RoleChange(int groupId, EditViewModel collection)
+        {
+            try
+            {
+                var role = _roleManager.FindByNameAsync(collection.RoleName).Result;
+                _context.Associations.Where(x => x.UserId == collection.UserId && x.GroupId == collection.Id).FirstOrDefault().RoleId = role.Id;
+                _context.SaveChangesAsync();
+                return RedirectToAction("Edit", new { id = collection.Id });
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("Index");
             }
         }
     }
