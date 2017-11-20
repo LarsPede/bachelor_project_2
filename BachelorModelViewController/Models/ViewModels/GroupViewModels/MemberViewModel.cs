@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 
 namespace BachelorModelViewController.Models.ViewModels.GroupViewModels
 {
-    public class Delete
+    public class MemberViewModel
     {
+        public User User { get; set; }
+        public int GroupId { get; set; }
+        public string RoleId { get; set; }
     }
 }

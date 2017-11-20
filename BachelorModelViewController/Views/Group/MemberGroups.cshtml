@@ -23,6 +23,14 @@
         @foreach (var item in Model) {
         <tr>
             <td>
+                @if (item.RoleId == null)
+                {
+                    <span class="glyphicon glyphicon-remove-circle"></span>
+                }
+                else
+                {
+                    <span class="glyphicon glyphicon-ok"></span>
+                }
                 @Html.DisplayFor(modelItem => item.GroupName)
             </td>
             <td class="pull-right">
