@@ -94,7 +94,7 @@
                             "Name",
                             roleManager.FindByIdAsync(item.RoleId).Result.Name),
                         "Roles...",
-                        new { @onchange = "this.form.submit()", @style= "height: 30px; margin: 0 8px 0 0", @disabled })
+                        new { @onchange = "this.form.submit()", @style= "height: 30px; margin: 0 8px 0 0", @disabled = "disabled" })
                         <input id="UserId" name="UserId" type="hidden" value="@item.User.Id">
                     </form>
                     </td>
