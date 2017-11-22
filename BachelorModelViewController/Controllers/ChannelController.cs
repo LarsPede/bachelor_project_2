@@ -33,10 +33,10 @@ namespace BachelorModelViewController.Controllers
 
             //var accessibleChannels = from Channels in _context.Channels ;
 
-            var asssociations = from Channels in _context.Channels
-                                join Associations in _context.Associations on Channels.Group equals Associations.GroupId into Association
-                                from joined in Association
-                                where joined.
+            //var asssociations = from Channels in _context.Channels
+            //                    join Associations in _context.Associations on Channels.Group equals Associations.GroupId into Association
+            //                    from joined in Association
+            //                    where joined.
 
 
 
@@ -46,7 +46,7 @@ namespace BachelorModelViewController.Controllers
     //from prod2 in prodGroup
     //where prod2.UnitPrice > 2.50M
     //select prod2;
-            )
+            //)
                                 
                                      
 

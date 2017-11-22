@@ -40,7 +40,16 @@ namespace BachelorModelViewController
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
-            
+
+            //Configure MongoSettings
+            services.Configure<MongoSettings>(options =>
+            {
+                options.ConnectionString
+                    = Configuration.GetSection("MongoConnection:ConnectionString").Value;
+                options.Database
+                    = Configuration.GetSection("MongoConnection:Database").Value;
+            });
+
             // Configure Identity
             services.Configure<IdentityOptions>(options =>
             {

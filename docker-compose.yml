@@ -22,6 +22,15 @@ services:
       - "31337:5432"
     volumes:
       - db-postgres:/var/lib/postgresql/data/pgdata:Z
+  mongo:
+    image: "mongo:3.4.1"
+    ports:
+      - "41337:27017"
+    volumes:
+      - db-mongo:/data/db:Z
+
 volumes:
   db-postgres:
+    external: true
+  db-mongo:
     external: true
