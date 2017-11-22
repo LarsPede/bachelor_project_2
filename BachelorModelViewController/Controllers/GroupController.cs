@@ -156,7 +156,12 @@ namespace BachelorModelViewController.Controllers
         // GET: Group/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var group = _context.Groups.Where(x => x.Id == id).Select(x => new DeleteViewModel {
+                Id = x.Id,
+                Name = x.Name,
+                Description = x.Description
+            }).FirstOrDefault();
+            return View(group);
         }
 
         // POST: Group/Delete/5
@@ -166,8 +171,9 @@ namespace BachelorModelViewController.Controllers
         {
             try
             {
-                // TODO: Add delete logic here
-
+                var group = _context.Groups.Where(x => x.Id == id).FirstOrDefault();
+                _context.Remove(group);
+                _context.SaveChanges();
                 return RedirectToAction("Index");
             }
             catch
