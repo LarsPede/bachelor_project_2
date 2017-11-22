@@ -12,6 +12,6 @@ namespace BachelorModelViewController.Models.ViewModels.GroupViewModels
         [DataType(DataType.Text)]
         [Display(Name = "Name")]
         public string GroupName { get; set; }
-        
+        public string Description { get; set; }
     }
 }

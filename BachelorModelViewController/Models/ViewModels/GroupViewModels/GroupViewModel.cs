@@ -13,6 +13,7 @@ namespace BachelorModelViewController.Models.ViewModels.GroupViewModels
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
+        public string Description { get; set; }
         public string RoleId { get; set; }
         [ForeignKey("RoleId")]
         public IdentityRole Role { get; set; }

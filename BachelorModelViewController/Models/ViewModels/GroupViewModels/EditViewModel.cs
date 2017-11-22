@@ -14,8 +14,10 @@ namespace BachelorModelViewController.Models.ViewModels.GroupViewModels
         [DataType(DataType.Text)]
         [Display(Name = "Name")]
         public string GroupName { get; set; }
+        public string Description { get; set; }
         public IEnumerable<MemberViewModel> Members { get; set; }
         public IEnumerable<MemberViewModel> ApplyingMembers { get; set; }
+        public bool OneAdmin { get; set; }
         public string UserId { get; set; }
         public string RoleName { get; set; }
     }
