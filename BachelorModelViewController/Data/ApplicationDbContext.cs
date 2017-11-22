@@ -34,6 +34,12 @@ namespace BachelorModelViewController.Data
             builder.Entity<Group>().ToTable("Groups", "dbo");
             builder.Entity<Association>().ToTable("Associations", "dbo");
 
+            // Set Unique
+
+            builder.Entity<Group>()
+                .HasIndex(u => u.Name)
+                .IsUnique();
+
             // Additional OnModelCreating configurations
             builder.HasPostgresExtension("uuid-ossp");
 
@@ -41,7 +47,5 @@ namespace BachelorModelViewController.Data
 
         public virtual DbSet<Group> Groups { get; set; }
         public virtual DbSet<Association> Associations { get; set; }
-        public DbSet<BachelorModelViewController.Models.ViewModels.GroupViewModels.GroupViewModel> GroupViewModel { get; set; }
-        public DbSet<BachelorModelViewController.Models.ViewModels.GroupViewModels.NonMemberGroupsViewModel> NonMemberGroupsViewModel { get; set; }
     }
 }

@@ -34,7 +34,12 @@ namespace BachelorModelViewController.Controllers
             var groups =
                 from Group in _context.Groups
                 join Association in _context.Associations on Group.Id equals Association.GroupId
-                select new MemberGroupsViewModel { GroupId = Group.Id, UserId = Association.UserId, GroupName = Group.Name, RoleId = Association.RoleId };
+                select new MemberGroupsViewModel
+                            { GroupId = Group.Id,
+                            UserId = Association.UserId,
+                            GroupName = Group.Name,
+                            RoleId = Association.RoleId };
+
             groups = groups.Where(x => x.UserId == userId).ToList().AsQueryable();
             ViewBag.ErrorMessage = errorMessage;
             return View(groups);
@@ -45,7 +50,18 @@ namespace BachelorModelViewController.Controllers
         {
             var userId = _userManager.GetUserId(HttpContext.User);
             var association = _context.Associations.Where(x => x.GroupId == id).Where(x => x.UserId == userId).FirstOrDefault();
-            var group = _context.Groups.Where(x => x.Id == id).Select(x => new DetailViewModel() { Id = x.Id, Name = x.Name, RoleId = association.RoleId }).FirstOrDefault();
+            var group = _context.Groups.Where(x => x.Id == id)
+                                .Select(x => new DetailViewModel()
+                                {
+                                    Id = x.Id,
+                                    Name = x.Name,
+                                    Description = x.Description
+                                }).FirstOrDefault();
+
+            if (association != null)
+            {
+                group.RoleId = association.RoleId;
+            }
             return View(group);
         }
 
@@ -65,7 +81,7 @@ namespace BachelorModelViewController.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    var group = new Group { Name = model.GroupName};
+                    var group = new Group { Name = model.GroupName, Description = model.Description};
                     _context.Groups.Add(group);
                     var user = await _userManager.GetUserAsync(HttpContext.User);
                     var role = await _roleManager.FindByNameAsync("Administrator");
@@ -83,7 +99,7 @@ namespace BachelorModelViewController.Controllers
         }
 
         // GET: Group/Edit/5
-        public async Task<ActionResult> EditAsync(int id)
+        public async Task<ActionResult> Edit(int id)
         {
             var currUser = await _userManager.GetUserAsync(HttpContext.User);
             var adminRole = await _roleManager.FindByNameAsync("Administrator");
@@ -97,8 +113,20 @@ namespace BachelorModelViewController.Controllers
             {
                 return RedirectToAction("Index");
             }
-            var group = _context.Groups.Where(x => x.Id == id).Select(x => new EditViewModel() { Id = x.Id, GroupName = x.Name, Members = members, ApplyingMembers = applyingMembers }).FirstOrDefault();
-            
+            var group = _context.Groups.Where(x => x.Id == id)
+                                .Select(x => new EditViewModel()
+                                {
+                                    Id = x.Id,
+                                    GroupName = x.Name,
+                                    Members = members,
+                                    ApplyingMembers = applyingMembers,
+                                    OneAdmin = true,
+                                    Description = x.Description
+                                }).FirstOrDefault();
+            if (members.Where(x => x.RoleId == adminRole.Id).Count() > 1)
+            {
+                group.OneAdmin = false;
+            }
 
             return View(group);
         }
@@ -110,9 +138,14 @@ namespace BachelorModelViewController.Controllers
         {
             try
             {
-                _context.Groups.Where(x => x.Id == id).FirstOrDefault().Name = collection.Name;
+                var group = _context.Groups.Where(x => x.Id == id).FirstOrDefault();
+                if (collection.Name != null)
+                {
+                    group.Name = collection.Name;
+                }
+                group.Description = collection.Description;
                 _context.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new { @id = id });
             }
             catch
             {
@@ -159,7 +192,7 @@ namespace BachelorModelViewController.Controllers
         }
 
         // Get: Group/Apply/1
-        public async Task<ActionResult> ApplyGroupAsync(int id)
+        public async Task<ActionResult> ApplyGroup(int id)
         {
             try
             {
@@ -178,7 +211,7 @@ namespace BachelorModelViewController.Controllers
         }
 
         // GET: Group/Approve/1/1
-        public async Task<ActionResult> ApproveAsync(string id, int groupId)
+        public async Task<ActionResult> Approve(string id, int groupId)
         {
             var role = await _roleManager.FindByNameAsync("Consumer");
             _context.Associations.Where(x => x.UserId == id && x.GroupId == groupId).FirstOrDefault().RoleId = role.Id;
@@ -199,7 +232,7 @@ namespace BachelorModelViewController.Controllers
         // POST: Group/RoleChange/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> RoleChangeAsync(int groupId, EditViewModel collection)
+        public async Task<ActionResult> RoleChange(int groupId, EditViewModel collection)
         {
             try
             {

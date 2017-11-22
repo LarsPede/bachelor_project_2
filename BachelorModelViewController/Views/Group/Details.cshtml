@@ -22,6 +22,12 @@
         <dd>
             @Html.DisplayFor(model => model.Name)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
         <dd>
             @if (Model.RoleId == roleManager.FindByNameAsync("Administrator").Result.Id) {
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span></a>
