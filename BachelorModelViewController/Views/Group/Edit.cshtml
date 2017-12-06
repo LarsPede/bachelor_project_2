@@ -93,7 +93,7 @@
                 <td>
                     @if (roleManager.FindByNameAsync("Administrator").Result.Id == item.RoleId && Model.OneAdmin)
                     {
-                    <a asp-action="Deny" asp-route-id="@item.User.Id" asp-route-groupId="@item.GroupId" class="btn btn-danger pull-right" style="height: 30px;" disabled><span class="glyphicon glyphicon-remove"></span></a>
+                    <a class="btn btn-danger pull-right" style="height: 30px;" disabled><span class="glyphicon glyphicon-remove"></span></a>
                     <form method="post" asp-action="RoleChange" asp-route-id="@item.GroupId" class="pull-right">
                         @Html.DropDownListFor(
                         model => model.RoleName,
