@@ -7,6 +7,7 @@ namespace BachelorModelViewController.Models.Data
 {
     public class DatatypeModel
     {
+        public int Id { get; set; }
         public string name { get; set; }
     }
 }

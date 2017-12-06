@@ -33,10 +33,15 @@ namespace BachelorModelViewController.Data
             // Mapping DbSets to dbo
             builder.Entity<Group>().ToTable("Groups", "dbo");
             builder.Entity<Association>().ToTable("Associations", "dbo");
+            builder.Entity<Channel>().ToTable("Channels", "dbo");
 
             // Set Unique
 
             builder.Entity<Group>()
+                .HasIndex(u => u.Name)
+                .IsUnique();
+
+            builder.Entity<Channel>()
                 .HasIndex(u => u.Name)
                 .IsUnique();
 
@@ -47,5 +52,6 @@ namespace BachelorModelViewController.Data
 
         public virtual DbSet<Group> Groups { get; set; }
         public virtual DbSet<Association> Associations { get; set; }
+        public virtual DbSet<Channel> Channels { get; set; }
     }
 }

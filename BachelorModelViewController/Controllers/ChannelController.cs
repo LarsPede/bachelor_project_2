@@ -31,24 +31,7 @@ namespace BachelorModelViewController.Controllers
         {
             var currentUser = _userManager.GetUserAsync(HttpContext.User);
 
-            //var accessibleChannels = from Channels in _context.Channels ;
-
-            //var asssociations = from Channels in _context.Channels
-            //                    join Associations in _context.Associations on Channels.Group equals Associations.GroupId into Association
-            //                    from joined in Association
-            //                    where joined.
-
-
-
-    //        var innerGroupJoinQuery2 =
-    //from category in categories
-    //join prod in products on category.ID equals prod.CategoryID into prodGroup
-    //from prod2 in prodGroup
-    //where prod2.UnitPrice > 2.50M
-    //select prod2;
-            //)
-                                
-                                     
+            var accessibleChannels = _context.Channels;
 
             return View();
         }
