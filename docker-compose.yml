@@ -4,8 +4,10 @@ services:
     image: bachelormodelviewcontroller
     links:
       - db
+      - mongo
     environment:
       ConnectionStrings__Dataconnection: "Host=db;Username=admin;Password=admin123;Database=cupid"
+      ConnectionStrings__Mongoconnection: "mongodb://mongo"
     ports:
       - "8000:80"
     build:
@@ -25,7 +27,7 @@ services:
   mongo:
     image: "mongo:3.4.1"
     ports:
-      - "41337:27017"
+      - "27017:27017"
     volumes:
       - db-mongo:/data/db:Z
 

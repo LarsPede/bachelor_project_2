@@ -1,5 +1,6 @@
 ﻿using BachelorModelViewController.Models;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace BachelorModelViewController.Data
     {
         private readonly IMongoDatabase _database = null;
 
+
         public MongoDbContext(IOptions<MongoSettings> settings)
         {
             var client = new MongoClient(settings.Value.ConnectionString);
@@ -19,9 +21,9 @@ namespace BachelorModelViewController.Data
                 _database = client.GetDatabase(settings.Value.Database);
         }
 
-        public IMongoCollection<Object> GetMongoCollection (string name)
+        public IMongoCollection<BsonDocument> GetMongoCollection (string name)
         {
-            return _database.GetCollection<Object>(name);
+            return _database.GetCollection<BsonDocument>(name);
         }
     }
 }

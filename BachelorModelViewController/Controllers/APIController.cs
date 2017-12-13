@@ -8,21 +8,33 @@ using BachelorModelViewController.Models;
 using BachelorModelViewController.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using MongoDB.Driver;
+using MongoDB.Bson;
+using Newtonsoft.Json;
+using Microsoft.Extensions.Options;
+using BachelorModelViewController.Interfaces;
 
 namespace BachelorModelViewController.Controllers
 {
+    public interface IAPIController
+    {
+
+    }
+
     [Produces("application/json")]
-    [Route("api/Channel")]
-    public class APIController : Controller
+    [Route("api")]
+    public class APIController : Controller, IAPIController
     {
 
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly ApplicationDbContext _context;
+        private readonly IMongoOperations _mongoOperations;
 
-        public APIController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public APIController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IMongoOperations mongoOperations)
         {
             _context = context;
+            _mongoOperations = mongoOperations;
             _userManager = userManager;
             _roleManager = roleManager;
 
@@ -33,6 +45,32 @@ namespace BachelorModelViewController.Controllers
         {
             return _context.Groups.ToList();
         }
+
+        // GET: api/get_mongo_collection/{collectionName}
+        [Route("get_mongo_collection/{name}")]
+        [HttpGet]
+        public JsonResult GetMongoCollection(string name)
+        {
+            var json = GetAllFromCollectionInternal(name).Result;
+
+            return Json(json);
+        }
+
+        private async Task<List<BsonDocument>> GetAllFromCollectionInternal(string collectionName)
+        {
+            return await _mongoOperations.GetAllFromCollection(collectionName);
+        }
+
+        //// GET: api/get_mongo_collection_from/{time}/{collectionName}
+        //[Route("get_mongo_collection_from"), HttpGet("{time}/{name}", Name = "getAllFromMongoCollectionFrom")]
+        //public async Task<IActionResult> GetMongoCollectionFrom(DateTime time, string name)
+        //{
+        //    var collection = _mongoContext.GetMongoCollection(name);
+        //    var list = await collection.Find(_ => true).ToListAsync();
+        //    return Json(list);
+        //    //var result = await collection.Find(_ => true).ToListAsync(); //collection.Find(_ => true).ToCursor(); //.AsQueryable().ToList();
+        //    //return Json(result);
+        //}
 
         // GET: api/Group/5
         [HttpGet("{id}", Name = "GetGroup")]

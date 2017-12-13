@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using BachelorModelViewController.Models;
 using BachelorModelViewController.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using BachelorModelViewController.Interfaces;
 
 namespace BachelorModelViewController
 {
@@ -39,13 +40,15 @@ namespace BachelorModelViewController
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddTransient<IMongoOperations, MongoOperations>();
+
             services.AddMvc();
 
             //Configure MongoSettings
             services.Configure<MongoSettings>(options =>
             {
                 options.ConnectionString
-                    = Configuration.GetSection("MongoConnection:ConnectionString").Value;
+                    = Configuration.GetConnectionString("Mongoconnection");
                 options.Database
                     = Configuration.GetSection("MongoConnection:Database").Value;
             });
