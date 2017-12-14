@@ -39,7 +39,7 @@ namespace BachelorModelViewController.Data
             return documents;
         }
 
-        public async Task<List<BsonDocument>> GetAllFromCollectionByFilter(string collectionName, IQueryCollection queryStringFilters)
+        public async Task<List<BsonDocument>> GetAllFromCollectionByAndFilter(string collectionName, IQueryCollection queryStringFilters)
         {
             var filter = Builders<BsonDocument>.Filter.Empty;
             foreach (var queryStringFilter in queryStringFilters)
@@ -83,6 +83,60 @@ namespace BachelorModelViewController.Data
                     {
                         var tempFilter = Builders<BsonDocument>.Filter.Eq(key, queryStringFilter.Value.ToString());
                         filter = filter & tempFilter;
+                    }
+                }
+
+            }
+            var documents = await _context.GetMongoCollection(collectionName).Find(filter).ToListAsync();
+            return documents;
+        }
+
+        public async Task<List<BsonDocument>> GetAllFromCollectionByOrFilter(string collectionName, IQueryCollection queryStringFilters)
+        {
+            var notPossible = new ObjectId(0, 0, 0, 0);
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", notPossible);
+            foreach (var queryStringFilter in queryStringFilters)
+            {
+                IFormatProvider provider = CultureInfo.CurrentCulture;
+
+                string key = queryStringFilter.Key.Replace("__gt", "");
+                key = queryStringFilter.Key.Replace("__lt", "");
+
+                int value;
+                if (int.TryParse(queryStringFilter.Value, NumberStyles.Integer, provider, out value))
+                {
+                    if (queryStringFilter.Key.Contains("__gt"))
+                    {
+                        var tempFilter = Builders<BsonDocument>.Filter.Gt(key, value);
+                        filter = filter | tempFilter;
+                    }
+                    else if (queryStringFilter.Key.Contains("__lt"))
+                    {
+                        var tempFilter = Builders<BsonDocument>.Filter.Lt(key, value);
+                        filter = filter | tempFilter;
+                    }
+                    else
+                    {
+                        var tempFilter = Builders<BsonDocument>.Filter.Eq(key, value);
+                        filter = filter | tempFilter;
+                    }
+                }
+                else
+                {
+                    if (queryStringFilter.Key.Contains("__gt"))
+                    {
+                        var tempFilter = Builders<BsonDocument>.Filter.Gt(key, queryStringFilter.Value.ToString());
+                        filter = filter | tempFilter;
+                    }
+                    else if (queryStringFilter.Key.Contains("__lt"))
+                    {
+                        var tempFilter = Builders<BsonDocument>.Filter.Lt(key, queryStringFilter.Value.ToString());
+                        filter = filter | tempFilter;
+                    }
+                    else
+                    {
+                        var tempFilter = Builders<BsonDocument>.Filter.Eq(key, queryStringFilter.Value.ToString());
+                        filter = filter | tempFilter;
                     }
                 }
 

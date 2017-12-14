@@ -95,11 +95,10 @@ namespace BachelorModelViewController.Controllers
             }
         }
 
-
         // GET: api/get_mongo_collection_filter/{collectionName}?filterByQuery
-        [Route("get_mongo_collection_filter/{name}")]
+        [Route("get_mongo_collection_or_filter/{name}")]
         [HttpGet]
-        public IActionResult GetAllFromCollectionByFilter(string name)
+        public IActionResult GetAllFromCollectionByOrFilter(string name)
         {
             try
             {
@@ -107,7 +106,7 @@ namespace BachelorModelViewController.Controllers
                 IQueryCollection filter = Request.Query;
                 if (filter.Count() > 0)
                 {
-                    bson = GetAllFromCollectionByFilterInternal(name, filter);
+                    bson = GetAllFromCollectionByFilterInternal(name, filter, false);
                 }
                 else
                 {
@@ -120,11 +119,43 @@ namespace BachelorModelViewController.Controllers
                 return Json(new { message = e.Message });
             }
         }
-        private List<BsonDocument> GetAllFromCollectionByFilterInternal(string collectionName, IQueryCollection jsonStringFilter)
+
+        // GET: api/get_mongo_collection_filter/{collectionName}?filterByQuery
+        [Route("get_mongo_collection_and_filter/{name}")]
+        [HttpGet]
+        public IActionResult GetAllFromCollectionByAndFilter(string name)
+        {
+            try
+            {
+                List<BsonDocument> bson;
+                IQueryCollection filter = Request.Query;
+                if (filter.Count() > 0)
+                {
+                    bson = GetAllFromCollectionByFilterInternal(name, filter, true);
+                }
+                else
+                {
+                    bson = GetAllFromCollectionInternal(name);
+                }
+                return Json(bson.Select(x => x.ToJson()));
+            }
+            catch (IndexOutOfRangeException e)
+            {
+                return Json(new { message = e.Message });
+            }
+        }
+
+        private List<BsonDocument> GetAllFromCollectionByFilterInternal(string collectionName, IQueryCollection jsonStringFilter, bool andFilter)
         {
             if (_mongoOperations.CollectionExists(collectionName))
             {
-                return _mongoOperations.GetAllFromCollectionByFilter(collectionName, jsonStringFilter).Result;
+                if(andFilter)
+                {
+                    return _mongoOperations.GetAllFromCollectionByAndFilter(collectionName, jsonStringFilter).Result;
+                } else
+                {
+                    return _mongoOperations.GetAllFromCollectionByOrFilter(collectionName, jsonStringFilter).Result;
+                }
             }
             else
             {
