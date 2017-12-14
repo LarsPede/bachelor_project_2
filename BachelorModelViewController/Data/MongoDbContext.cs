@@ -21,9 +21,18 @@ namespace BachelorModelViewController.Data
                 _database = client.GetDatabase(settings.Value.Database);
         }
 
-        public IMongoCollection<BsonDocument> GetMongoCollection (string name)
+        public IMongoCollection<BsonDocument> GetMongoCollection(string name)
         {
             return _database.GetCollection<BsonDocument>(name);
+        }
+
+        public async Task<bool> CollectionExists(string collectionName)
+        {
+            var filter = new BsonDocument("name", collectionName);
+            //filter by collection name
+            var collections = await _database.ListCollectionsAsync(new ListCollectionsOptions { Filter = filter });
+            //check for existence
+            return await collections.AnyAsync();
         }
     }
 }

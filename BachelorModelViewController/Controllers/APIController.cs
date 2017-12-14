@@ -39,104 +39,99 @@ namespace BachelorModelViewController.Controllers
             _roleManager = roleManager;
 
         }
-        // GET: api/Groups
-        [HttpGet]
-        public IEnumerable<Group> GetAll()
-        {
-            return _context.Groups.ToList();
-        }
+
 
         // GET: api/get_mongo_collection/{collectionName}
         [Route("get_mongo_collection/{name}")]
         [HttpGet]
-        public JsonResult GetMongoCollection(string name)
+        public IActionResult GetMongoCollection(string name)
         {
-            var json = GetAllFromCollectionInternal(name).Result;
-
-            return Json(json);
-        }
-
-        private async Task<List<BsonDocument>> GetAllFromCollectionInternal(string collectionName)
-        {
-            return await _mongoOperations.GetAllFromCollection(collectionName);
-        }
-
-        //// GET: api/get_mongo_collection_from/{time}/{collectionName}
-        //[Route("get_mongo_collection_from"), HttpGet("{time}/{name}", Name = "getAllFromMongoCollectionFrom")]
-        //public async Task<IActionResult> GetMongoCollectionFrom(DateTime time, string name)
-        //{
-        //    var collection = _mongoContext.GetMongoCollection(name);
-        //    var list = await collection.Find(_ => true).ToListAsync();
-        //    return Json(list);
-        //    //var result = await collection.Find(_ => true).ToListAsync(); //collection.Find(_ => true).ToCursor(); //.AsQueryable().ToList();
-        //    //return Json(result);
-        //}
-
-        // GET: api/Group/5
-        [HttpGet("{id}", Name = "GetGroup")]
-        public IActionResult GetGroupById(int id)
-        {
-            var group = _context.Groups.FirstOrDefault(t => t.Id == id);
-            if (group == null)
+            try
             {
-                return NotFound();
-            }
-            return new ObjectResult(group);
-        }
+                var bson = GetAllFromCollectionInternal(name);
 
-        [HttpPost]
-        public async Task<ActionResult> CreateGroupAsync([FromBody] Group item)
-        {
-            if (item == null)
+                return Json(bson.Select(x => x.ToJson()));
+            } catch (IndexOutOfRangeException e)
             {
-                return BadRequest();
+                return Json(new { message = e.Message });
             }
-
-            _context.Groups.Add(item);
-            string userId =  (await _userManager.GetUserAsync(HttpContext.User))?.Id;
-            string roleId = (await _roleManager.FindByNameAsync("Administrator"))?.Id;
-            var association = new Association { GroupId = item.Id, UserId = userId, RoleId = roleId };
-            _context.Associations.Add(association);
-            _context.SaveChanges();
-
-            return CreatedAtRoute("GetGroup", new { id = item.Id }, item);
         }
-
-        [HttpPut("{id}")]
-        public IActionResult UpdateGroup(int id, [FromBody] Group item)
+        private List<BsonDocument> GetAllFromCollectionInternal(string collectionName)
         {
-            if (item == null || item.Id != id)
+            if (_mongoOperations.CollectionExists(collectionName))
             {
-                return BadRequest();
-            }
-
-            var group = _context.Groups.FirstOrDefault(t => t.Id == id);
-
-            if (group == null)
+                return _mongoOperations.GetAllFromCollection(collectionName).Result;
+            } else
             {
-                return NotFound();
+                throw new IndexOutOfRangeException("The collection you are looking for, doesn't exist");
             }
-
-            group.Name = item.Name;
-
-            _context.Groups.Update(group);
-            _context.SaveChanges();
-            return new NoContentResult();
         }
 
-        // DELETE: api/Group/5
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+
+        // GET: api/get_mongo_collection_from/{collectionName}/{unixTimeInSeconds}
+        [Route("get_mongo_collection_from/{name}/{time}")]
+        [HttpGet]
+        public IActionResult GetAllFromCollectionFrom(string name, int time)
         {
-            var group = _context.Groups.FirstOrDefault(t => t.Id == id);
-
-            if (group == null) return NotFound();
-
-            _context.Groups.Remove(group);
-            _context.SaveChanges();
-            return new NoContentResult();
+            try
+            {
+                var bson = GetAllFromCollectionFromInternal(name, time);
+                return Json(bson.Select(x => x.ToJson()));
+            }
+            catch (IndexOutOfRangeException e)
+            {
+                return Json(new { message = e.Message });
+            }
+        }
+        private List<BsonDocument> GetAllFromCollectionFromInternal(string collectionName, int time)
+        {
+            if (_mongoOperations.CollectionExists(collectionName))
+            {
+                return _mongoOperations.GetAllFromCollectionFromTime(collectionName, time).Result;
+            }
+            else
+            {
+                throw new IndexOutOfRangeException("The collection you are looking for, doesn't exist");
+            }
         }
 
-        private Task<User> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
+
+        // GET: api/get_mongo_collection_filter/{collectionName}?filterByQuery
+        [Route("get_mongo_collection_filter/{name}")]
+        [HttpGet]
+        public IActionResult GetAllFromCollectionByFilter(string name)
+        {
+            try
+            {
+                List<BsonDocument> bson;
+                IQueryCollection filter = Request.Query;
+                if (filter.Count() > 0)
+                {
+                    bson = GetAllFromCollectionByFilterInternal(name, filter);
+                }
+                else
+                {
+                    bson = GetAllFromCollectionInternal(name);
+                }
+                return Json(bson.Select(x => x.ToJson()));
+            }
+            catch (IndexOutOfRangeException e)
+            {
+                return Json(new { message = e.Message });
+            }
+        }
+        private List<BsonDocument> GetAllFromCollectionByFilterInternal(string collectionName, IQueryCollection jsonStringFilter)
+        {
+            if (_mongoOperations.CollectionExists(collectionName))
+            {
+                return _mongoOperations.GetAllFromCollectionByFilter(collectionName, jsonStringFilter).Result;
+            }
+            else
+            {
+                throw new IndexOutOfRangeException("The collection you are looking for, doesn't exist");
+            }
+        }
+
+
     }
 }
