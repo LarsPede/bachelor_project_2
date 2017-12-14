@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BachelorModelViewController.Models;
-using BachelorModelViewController.Models.ViewModels.DataViewModels;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity;
 using BachelorModelViewController.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using BachelorModelViewController.Models.ViewModels.ChannelViewModels;
 
 namespace BachelorModelViewController.Controllers
 {
@@ -27,13 +27,54 @@ namespace BachelorModelViewController.Controllers
         }
 
         // GET: Channel
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            var currentUser = _userManager.GetUserAsync(HttpContext.User);
+            var accessibleChannels = new AccessibleChannelsViewModel();
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            if (currentUser != null)
+            {
+                var groups = _context.Associations.Where(x => x.User == currentUser).Select(x => x.Group).ToList();
 
-            var accessibleChannels = _context.Channels;
+                accessibleChannels.GroupRestrictedChannels = await _context.Channels
+                                                            .Where(x => x.AccessRestriction.GroupRestricted == true && groups.Contains(x.Group))
+                                                                    .Select(x => new ChannelViewModel
+                                                                    {
+                                                                        Name = x.Name,
+                                                                        Description = x.Description,
+                                                                        User = x.User,
+                                                                        Group = x.Group,
+                                                                        EntryPoint = x.EntryPoint,
+                                                                        EndPoint = x.EndPoint
+                                                                    }).ToList();
 
-            return View();
+
+                accessibleChannels.UserRestrictedChannels = await _context.Channels
+                                                            .Where(x => x.AccessRestriction.GroupRestricted == false
+                                                                    && x.AccessRestriction.UserRestricted == true)
+                                                                    .Select(x => new ChannelViewModel
+                                                                        {
+                                                                            Name = x.Name,
+                                                                            Description = x.Description,
+                                                                            User = x.User,
+                                                                            Group = x.Group,
+                                                                            EntryPoint = x.EntryPoint,
+                                                                            EndPoint = x.EndPoint
+                                                                        }).ToList().AsQueryable();
+
+            }
+                accessibleChannels.UnRestrictedChannels = _context.Channels
+                                                            .Where(x => x.AccessRestriction.GroupRestricted == false 
+                                                                    && x.AccessRestriction.UserRestricted == false)
+                                                                    .Select(x => new ChannelViewModel
+                                                                    {
+                                                                        Name = x.Name,
+                                                                        Description = x.Description,
+                                                                        User = x.User,
+                                                                        Group = x.Group,
+                                                                        EntryPoint = x.EntryPoint,
+                                                                        EndPoint = x.EndPoint
+                                                                    }).ToList().AsQueryable();
+            return View(accessibleChannels);
         }
 
         // GET: Channel/Details/5

@@ -1,0 +1,85 @@
+@using BachelorModelViewController.Models.ViewModels.ChannelViewModels
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
+@inject RoleManager<IdentityRole> roleManager
+
+@model AccessibleChannelsViewModel
+
+        <p>
+            <a asp-action="Create" class="btn btn-default">Create a new Channel</a>
+        </p>
+
+    
+    @if (Model.GroupRestrictedChannels.Any())
+    {
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.GroupRestrictedChannels)
+                {
+                <tr>
+                    <td>
+                        item.Name
+                    </td>
+                </tr>
+                }
+        </tbody>
+    </table>
+    }
+
+    @if (Model.UserRestrictedChannels.Any())
+    {
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.UserRestrictedChannels)
+                {
+                <tr>
+                    <td>
+                        item.Name
+                    </td>
+                </tr>
+                }
+        </tbody>
+    </table>
+    }
+    
+    @if (Model.UnRestrictedChannels.Any())
+    {
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.UnRestrictedChannels)
+                {
+                <tr>
+                    <td>
+                        item.Name
+                    </td>
+                </tr>
+                }
+        </tbody>
+    </table>
+    }
+        

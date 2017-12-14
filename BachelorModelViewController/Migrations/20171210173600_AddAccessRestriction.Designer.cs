@@ -8,9 +8,10 @@ using BachelorModelViewController.Data;
 namespace BachelorModelViewController.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171210173600_AddAccessRestriction")]
+    partial class AddAccessRestriction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("Npgsql:PostgresExtension:uuid-ossp", "'uuid-ossp', '', ''")
@@ -32,7 +33,7 @@ namespace BachelorModelViewController.Migrations
 
                     b.HasIndex("AccessLevelId");
 
-                    b.ToTable("AccessRestrictions","dbo");
+                    b.ToTable("AccessRestriction");
                 });
 
             modelBuilder.Entity("BachelorModelViewController.Models.Association", b =>

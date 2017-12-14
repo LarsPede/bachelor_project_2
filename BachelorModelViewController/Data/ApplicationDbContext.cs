@@ -34,6 +34,7 @@ namespace BachelorModelViewController.Data
             builder.Entity<Group>().ToTable("Groups", "dbo");
             builder.Entity<Association>().ToTable("Associations", "dbo");
             builder.Entity<Channel>().ToTable("Channels", "dbo");
+            builder.Entity<AccessRestriction>().ToTable("AccessRestrictions", "dbo");
 
             // Set Unique
 
@@ -53,5 +54,6 @@ namespace BachelorModelViewController.Data
         public virtual DbSet<Group> Groups { get; set; }
         public virtual DbSet<Association> Associations { get; set; }
         public virtual DbSet<Channel> Channels { get; set; }
+        public virtual DbSet<AccessRestriction> AccessRestrictions { get; set; }
     }
 }
