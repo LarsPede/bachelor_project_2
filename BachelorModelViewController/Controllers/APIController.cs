@@ -41,17 +41,19 @@ namespace BachelorModelViewController.Controllers
         }
 
 
-        // GET: api/get_mongo_collection/{collectionName}
-        [Route("get_mongo_collection/{name}")]
+        // GET: api/get_all_channel_data/{channelName}/{userToken}
+        [Route("get_all_channel_data/{name}/{token}")]
         [HttpGet]
-        public IActionResult GetMongoCollection(string name)
+        public IActionResult GetMongoCollection(string name, string id = null)
         {
+
             try
             {
+                UserAuthenticatedToChannel(id);
                 var bson = GetAllFromCollectionInternal(name);
 
                 return Json(bson.Select(x => x.ToJson()));
-            } catch (IndexOutOfRangeException e)
+            } catch (Exception e)
             {
                 return Json(new { message = e.Message });
             }
@@ -66,8 +68,7 @@ namespace BachelorModelViewController.Controllers
                 throw new IndexOutOfRangeException("The collection you are looking for, doesn't exist");
             }
         }
-
-
+        
         // GET: api/get_mongo_collection_from/{collectionName}/{unixTimeInSeconds}
         [Route("get_mongo_collection_from/{name}/{time}")]
         [HttpGet]
@@ -161,6 +162,10 @@ namespace BachelorModelViewController.Controllers
             {
                 throw new IndexOutOfRangeException("The collection you are looking for, doesn't exist");
             }
+        }
+
+        private void UserAuthenticatedToChannel(string id)
+        {
         }
 
 
