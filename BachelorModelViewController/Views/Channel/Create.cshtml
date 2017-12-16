@@ -89,6 +89,39 @@
             </div>
         </div>
         <div class="form-group">
+            <div class="col-md-2 control-label"><label>Define your data</label> <span class="glyphicon glyphicon-question-sign"></span></div>
+            <div class="col-md-10 form-inline">
+                <span>Send a json string</span>
+                <input type="radio" name="jsonContent" value="1" checked />
+                <span>Define the datatype from our site</span>
+                <input type="radio" name="jsonContent" value="2" />
+            </div>
+        </div>
+        <div class="form-group json-upload">
+            <div class="col-md-offset-2 col-md-10">
+                <input asp-for="JsonContentAsString" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group json-upload" style="display: none;">
+            <div class="col-md-offset-2 col-md-10 json-upload-fields">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <input class="form-control" />
+                            </div>
+                            <div class="col-sm-1 text-center">
+                                :
+                            </div>
+                            <div class="col-sm-3">
+                                <input class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group ">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" class="btn btn-default" />
             </div>
@@ -102,13 +135,25 @@
     var prev = null;
     for(var i = 0; i < rad.length; i++) {
         rad[i].onclick = function() {
-            if(this !== prev) {
-                prev = this;
+            if (this !== prev) {
+                prevRadio = this;
                 if (this.value == 3) {
                     $('.role-demanded').show();
                 } else {
                     $('.role-demanded').hide();
                 }
+                
+            }
+        };
+    }
+
+    var radio = document.channelCreate.jsonContent;
+    var prevRadio = null;
+    for (var i = 0; i < rad.length; i++) {
+        radio[i].onclick = function () {
+            if (this !== prev) {
+                prevRadio = this;
+                $('.json-upload').toggle();
             }
         };
     }
