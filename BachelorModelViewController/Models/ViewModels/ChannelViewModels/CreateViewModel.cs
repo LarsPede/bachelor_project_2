@@ -18,5 +18,6 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
         public IEnumerable<Group> AccessibleGroups { get; set; }
         public int AccessRestriction { get; set; }
         public IdentityRole DemandedRole { get; set; }
+        public string JsonContentAsString { get; set; }
     }
 }

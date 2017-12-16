@@ -20,6 +20,9 @@
 .row.background {
     background-color: #F3F3F3;
 }
+form .row {
+    background-color: #F3F3F3;
+}
 
 .logo {
     height: 38px;
