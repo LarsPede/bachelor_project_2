@@ -49,7 +49,6 @@
     <Folder Include="Models\ViewModels\ManageViewModels\" />
     <Folder Include="Views\Account\" />
     <Folder Include="Views\Manage\" />
-    <Folder Include="Views\Channel\" />
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\js\" />

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using BachelorModelViewController.Models;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 using BachelorModelViewController.Models.ViewModels.GroupViewModels;
+using BachelorModelViewController.Models.ViewModels.ChannelViewModels;
 
 namespace BachelorModelViewController.Data
 {

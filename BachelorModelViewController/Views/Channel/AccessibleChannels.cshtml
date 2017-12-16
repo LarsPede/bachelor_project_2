@@ -1,64 +1,77 @@
 @using BachelorModelViewController.Models.ViewModels.ChannelViewModels
 @using Microsoft.AspNetCore.Identity;
 @using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+@using BachelorModelViewController.Models;
 
+@inject SignInManager<User> signInManager
 @inject RoleManager<IdentityRole> roleManager
 
 @model AccessibleChannelsViewModel
-
+    @if (signInManager.IsSignedIn(User))
+    {
         <p>
-            <a asp-action="Create" class="btn btn-default">Create a new Channel</a>
+            @if (Model.AdminForGroup)
+            {
+                <a asp-action="Create" asp-route-asUser="@false" class="btn btn-default">Create a Channel associated with a Group</a>
+            }
+            <a asp-action="Create" asp-route-asUser="@true" class="btn btn-default">Create a Channel associated with your account</a>
         </p>
-
-    
-    @if (Model.GroupRestrictedChannels.Any())
-    {
-    <table class="table table-responsive">
-        <thead>
-            <tr>
-                <th>
-                    Name
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.GroupRestrictedChannels)
-                {
-                <tr>
-                    <td>
-                        item.Name
-                    </td>
-                </tr>
-                }
-        </tbody>
-    </table>
     }
 
-    @if (Model.UserRestrictedChannels.Any())
+    @if (Model.GroupRestrictedChannels != null)
     {
-    <table class="table table-responsive">
-        <thead>
-            <tr>
-                <th>
-                    Name
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.UserRestrictedChannels)
-                {
-                <tr>
-                    <td>
-                        item.Name
-                    </td>
-                </tr>
-                }
-        </tbody>
-    </table>
+
+        @if (Model.GroupRestrictedChannels.Any())
+        {
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>
+                            Name
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.GroupRestrictedChannels)
+                    {
+                        <tr>
+                            <td>
+                                item.Name
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
     }
-    
+    @if (Model.UserRestrictedChannels != null)
+    {
+        @if (Model.UserRestrictedChannels.Any())
+        {
+        <table class="table table-responsive">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.UserRestrictedChannels)
+                {
+                    <tr>
+                        <td>
+                            item.Name
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        }
+    }
+
     @if (Model.UnRestrictedChannels.Any())
     {
     <table class="table table-responsive">

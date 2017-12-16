@@ -10,5 +10,6 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
         public IEnumerable<ChannelViewModel> UnRestrictedChannels { get; set; }
         public IEnumerable<ChannelViewModel> UserRestrictedChannels { get; set; }
         public IEnumerable<ChannelViewModel> GroupRestrictedChannels { get; set; }
+        public bool AdminForGroup { get; set; }
     }
 }

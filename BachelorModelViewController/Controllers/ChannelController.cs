@@ -31,11 +31,21 @@ namespace BachelorModelViewController.Controllers
         {
             var accessibleChannels = new AccessibleChannelsViewModel();
             var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            var adminRole = await _roleManager.FindByNameAsync("Administrator");
             if (currentUser != null)
             {
                 var groups = _context.Associations.Where(x => x.User == currentUser).Select(x => x.Group).ToList();
+                var administratorAccess = _context.Associations.Where(x => x.User == currentUser && x.Role == adminRole).Select(x => x.Group).FirstOrDefault();
 
-                accessibleChannels.GroupRestrictedChannels = await _context.Channels
+                if (administratorAccess != null)
+                {
+                    accessibleChannels.AdminForGroup = true;
+                } else
+                {
+                    accessibleChannels.AdminForGroup = false;
+                }
+
+                accessibleChannels.GroupRestrictedChannels = _context.Channels
                                                             .Where(x => x.AccessRestriction.GroupRestricted == true && groups.Contains(x.Group))
                                                                     .Select(x => new ChannelViewModel
                                                                     {
@@ -48,7 +58,7 @@ namespace BachelorModelViewController.Controllers
                                                                     }).ToList();
 
 
-                accessibleChannels.UserRestrictedChannels = await _context.Channels
+                accessibleChannels.UserRestrictedChannels = _context.Channels
                                                             .Where(x => x.AccessRestriction.GroupRestricted == false
                                                                     && x.AccessRestriction.UserRestricted == true)
                                                                     .Select(x => new ChannelViewModel
@@ -84,19 +94,43 @@ namespace BachelorModelViewController.Controllers
         }
 
         // GET: Channel/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create(bool asUser)
         {
-            return View();
+            var createView = new CreateViewModel();
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            var adminRole = await _roleManager.FindByNameAsync("Administrator");
+            if (asUser)
+            {
+                createView.User = currentUser;
+            } else
+            {
+                createView.AccessibleGroups = _context.Associations.Where(x => x.User == currentUser && x.Role == adminRole).Select(x => x.Group).ToList();
+                if (createView.AccessibleGroups.Count() == 1)
+                {
+                    createView.Group = createView.AccessibleGroups.First();
+                }
+            }
+            return View(createView);
         }
 
         // POST: Channel/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(CreateViewModel model, IFormCollection collection)
         {
             try
             {
-                // TODO: Add insert logic here
+                var channel = new Channel();
+                if (ModelState.IsValid)
+                {
+                    if (model.Group != null)
+                    {
+                        channel.Group = model.Group;
+                    } else
+                    {
+                        channel.User = model.User;
+                    }
+                }
 
                 return RedirectToAction("Index");
             }
