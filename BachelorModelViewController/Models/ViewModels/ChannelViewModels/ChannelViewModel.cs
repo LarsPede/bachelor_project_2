@@ -24,9 +24,7 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
                 Name = channel.Name,
                 Description = channel.Description,
                 User = channel.User,
-                Group = channel.Group,
-                EntryPoint = channel.EntryPoint,
-                EndPoint = channel.EndPoint
+                Group = channel.Group
             };
         }
 
@@ -37,9 +35,7 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
                 Name = vm.Name,
                 Description = vm.Description,
                 User = vm.User,
-                Group = vm.Group,
-                EntryPoint = vm.EntryPoint,
-                EndPoint = vm.EndPoint
+                Group = vm.Group
             };
         }
     }

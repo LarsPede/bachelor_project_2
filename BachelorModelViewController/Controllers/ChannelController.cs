@@ -52,9 +52,7 @@ namespace BachelorModelViewController.Controllers
                                                                         Name = x.Name,
                                                                         Description = x.Description,
                                                                         User = x.User,
-                                                                        Group = x.Group,
-                                                                        EntryPoint = x.EntryPoint,
-                                                                        EndPoint = x.EndPoint
+                                                                        Group = x.Group
                                                                     }).ToList();
 
 
@@ -66,9 +64,7 @@ namespace BachelorModelViewController.Controllers
                                                                             Name = x.Name,
                                                                             Description = x.Description,
                                                                             User = x.User,
-                                                                            Group = x.Group,
-                                                                            EntryPoint = x.EntryPoint,
-                                                                            EndPoint = x.EndPoint
+                                                                            Group = x.Group
                                                                         }).ToList().AsQueryable();
 
             }
@@ -80,9 +76,7 @@ namespace BachelorModelViewController.Controllers
                                                                         Name = x.Name,
                                                                         Description = x.Description,
                                                                         User = x.User,
-                                                                        Group = x.Group,
-                                                                        EntryPoint = x.EntryPoint,
-                                                                        EndPoint = x.EndPoint
+                                                                        Group = x.Group
                                                                     }).ToList().AsQueryable();
             return View(accessibleChannels);
         }

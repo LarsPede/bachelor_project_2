@@ -1,4 +1,9 @@
 @using BachelorModelViewController.Models.ViewModels.ChannelViewModels
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
+@inject RoleManager<IdentityRole> roleManager
+
 @model CreateViewModel
 
 @{
@@ -7,28 +12,43 @@
 
 <h2>View</h2>
 
-<form asp-controller="Channel" asp-action="Create">
+<form name="channelCreate" asp-controller="Channel" asp-action="Create">
     <div class="form-horizontal">
-        @if (Model.AccessibleGroups != null) {
+        @if (Model.AccessibleGroups != null)
+        {
             <h4>Create a Channel owned by a group</h4>
-            <hr />
-            @if (Model.Group == null) {
-                <div class="form-group">
+        } else {
+            <h4>Create a Channel owned by your user</h4>
+        }
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @if (Model.AccessibleGroups != null && Model.Group == null)
+        {
+            <div class="form-group">
+                <label asp-for="Group" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
                     @Html.DropDownListFor(
-                            model => model.GroupId,
+                            model => model.Group.Id,
                             new SelectList(
                                 Model.AccessibleGroups,
                                 "Id",
                                 "Name"),
-                            "Groups...")
+                            "Groups...",
+                            new { @class="form-control" })
                 </div>
-            }
-        } else {
-        <h4>Create a Channel owned by your user</h4>
-        <hr />
+            </div>
+        } else if (Model.Group != null)
+        {
+            <div class="form-group">
+                @Html.HiddenFor(m => m.Group.Id)
+            </div>
+        } else
+        {
+            <div class="form-group">
+                @Html.HiddenFor(m => m.User.Id)
+            </div>
         }
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
+         <div class="form-group">
             <label asp-for="Name" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="Name" class="form-control" />
@@ -43,12 +63,56 @@
             </div>
         </div>
         <div class="form-group">
+            <div class="col-md-2 control-label"><label asp-for="AccessRestriction"></label> <span class="glyphicon glyphicon-question-sign"></span></div>
+            <div class="col-md-10 form-inline">
+                    <span>Not Authenticated</span>
+                    <input type="radio" asp-for="AccessRestriction" value="1" checked />
+                    <span>Authenticated</span>
+                    <input type="radio" asp-for="AccessRestriction" value="2" />
+                @if (Model.AccessibleGroups != null)
+                {
+                    <span>Group Authenticated</span>
+                    <input type="radio" asp-for="AccessRestriction" value="3" />
+                }
+            </div>
+        </div>
+        <div class="form-group role-demanded" style="display: none;">
+            <div class="col-md-2 control-label"><label asp-for="DemandedRole"></label> <span class="glyphicon glyphicon-question-sign"></span></div>
+            <div class="col-md-10">
+                @Html.DropDownListFor(
+                        model => model.DemandedRole.Id,
+                        new SelectList(
+                            roleManager.Roles.Where(x => x.Name != "God" && x.Name != "Consumer"),
+                            "Id",
+                            "Name"),
+                        "Standard restrictions")
+            </div>
+        </div>
+        <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" class="btn btn-default" />
             </div>
         </div>
     </div>
 </form>
+
+
+<script>
+    var rad = document.channelCreate.AccessRestriction;
+    var prev = null;
+    for(var i = 0; i < rad.length; i++) {
+        rad[i].onclick = function() {
+            if(this !== prev) {
+                prev = this;
+                if (this.value == 3) {
+                    $('.role-demanded').show();
+                } else {
+                    $('.role-demanded').hide();
+                }
+            }
+        };
+    }
+</script>
 
 <div>
     <a asp-action="Index">Back to List</a>

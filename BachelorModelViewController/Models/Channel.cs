@@ -16,8 +16,6 @@ namespace BachelorModelViewController.Models
         public string Description { get; set; }
         public User User { get; set; }
         public Group Group { get; set; }
-        public string EntryPoint { get; set; }
-        public string EndPoint { get; set; }
         public AccessRestriction AccessRestriction { get; set; }
         public DatatypeModel Content { get; set; }
 
