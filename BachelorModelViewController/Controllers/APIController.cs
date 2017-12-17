@@ -41,17 +41,19 @@ namespace BachelorModelViewController.Controllers
         }
 
 
-        // GET: api/get_mongo_collection/{collectionName}
-        [Route("get_mongo_collection/{name}")]
+        // GET: api/get_all_channel_data/{channelName}/{userToken}
+        [Route("get_all_channel_data/{name}/{token}")]
         [HttpGet]
-        public IActionResult GetMongoCollection(string name)
+        public IActionResult GetMongoCollection(string name, string token = null)
         {
+
             try
             {
+                UserAuthenticatedToChannel(token, name);
                 var bson = GetAllFromCollectionInternal(name);
 
                 return Json(bson.Select(x => x.ToJson()));
-            } catch (IndexOutOfRangeException e)
+            } catch (Exception e)
             {
                 return Json(new { message = e.Message });
             }
@@ -66,19 +68,19 @@ namespace BachelorModelViewController.Controllers
                 throw new IndexOutOfRangeException("The collection you are looking for, doesn't exist");
             }
         }
-
-
-        // GET: api/get_mongo_collection_from/{collectionName}/{unixTimeInSeconds}
-        [Route("get_mongo_collection_from/{name}/{time}")]
+        
+        // GET: api/get_mongo_collection_from/{collectionName}/{unixTimeInSeconds}/{token}
+        [Route("get_mongo_collection_from/{name}/{time}/{token}")]
         [HttpGet]
-        public IActionResult GetAllFromCollectionFrom(string name, int time)
+        public IActionResult GetAllFromCollectionFrom(string name, int time, string token = null)
         {
             try
             {
+                UserAuthenticatedToChannel(token, name);
                 var bson = GetAllFromCollectionFromInternal(name, time);
                 return Json(bson.Select(x => x.ToJson()));
             }
-            catch (IndexOutOfRangeException e)
+            catch (Exception e)
             {
                 return Json(new { message = e.Message });
             }
@@ -95,13 +97,14 @@ namespace BachelorModelViewController.Controllers
             }
         }
 
-        // GET: api/get_mongo_collection_filter/{collectionName}?filterByQuery
-        [Route("get_mongo_collection_or_filter/{name}")]
+        // GET: api/get_mongo_collection_filter/{collectionName}/{token}?filterByQuery
+        [Route("get_mongo_collection_or_filter/{name}/{token}")]
         [HttpGet]
-        public IActionResult GetAllFromCollectionByOrFilter(string name)
+        public IActionResult GetAllFromCollectionByOrFilter(string name, string token = null)
         {
             try
             {
+                UserAuthenticatedToChannel(token, name);
                 List<BsonDocument> bson;
                 IQueryCollection filter = Request.Query;
                 if (filter.Count() > 0)
@@ -114,19 +117,20 @@ namespace BachelorModelViewController.Controllers
                 }
                 return Json(bson.Select(x => x.ToJson()));
             }
-            catch (IndexOutOfRangeException e)
+            catch (Exception e)
             {
                 return Json(new { message = e.Message });
             }
         }
 
-        // GET: api/get_mongo_collection_filter/{collectionName}?filterByQuery
-        [Route("get_mongo_collection_and_filter/{name}")]
+        // GET: api/get_mongo_collection_filter/{collectionName}/{token}?filterByQuery
+        [Route("get_mongo_collection_and_filter/{name}/{token}")]
         [HttpGet]
-        public IActionResult GetAllFromCollectionByAndFilter(string name)
+        public IActionResult GetAllFromCollectionByAndFilter(string name, string token = null)
         {
             try
             {
+                UserAuthenticatedToChannel(token, name);
                 List<BsonDocument> bson;
                 IQueryCollection filter = Request.Query;
                 if (filter.Count() > 0)
@@ -139,7 +143,7 @@ namespace BachelorModelViewController.Controllers
                 }
                 return Json(bson.Select(x => x.ToJson()));
             }
-            catch (IndexOutOfRangeException e)
+            catch (Exception e)
             {
                 return Json(new { message = e.Message });
             }
@@ -161,6 +165,11 @@ namespace BachelorModelViewController.Controllers
             {
                 throw new IndexOutOfRangeException("The collection you are looking for, doesn't exist");
             }
+        }
+
+        private void UserAuthenticatedToChannel(string token, string channelName)
+        {
+            //var accessRestriction = _context.
         }
 
 
