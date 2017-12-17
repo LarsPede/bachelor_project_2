@@ -52,7 +52,7 @@ namespace BachelorModelViewController.Controllers
             {
                 UserAuthenticatedToChannel(token, name);
                 var bson = GetAllFromCollectionInternal(name);
-
+                
                 return Json(bson.Select(x => BsonSerializer.Deserialize<Object>(x)));
             } catch (Exception e)
             {
@@ -211,6 +211,11 @@ namespace BachelorModelViewController.Controllers
             {
                 throw new UnauthorizedAccessException("You are not authorized to access this channel.");
             }
+        }
+
+        private void UserAuthenticatedToChannel(string token, string channelName)
+        {
+            //var accessRestriction = _context.
         }
 
 
