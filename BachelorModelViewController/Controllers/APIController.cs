@@ -49,7 +49,7 @@ namespace BachelorModelViewController.Controllers
 
             try
             {
-                UserAuthenticatedToChannel(token);
+                UserAuthenticatedToChannel(token, name);
                 var bson = GetAllFromCollectionInternal(name);
 
                 return Json(bson.Select(x => x.ToJson()));
@@ -76,10 +76,11 @@ namespace BachelorModelViewController.Controllers
         {
             try
             {
+                UserAuthenticatedToChannel(token, name);
                 var bson = GetAllFromCollectionFromInternal(name, time);
                 return Json(bson.Select(x => x.ToJson()));
             }
-            catch (IndexOutOfRangeException e)
+            catch (Exception e)
             {
                 return Json(new { message = e.Message });
             }
@@ -103,6 +104,7 @@ namespace BachelorModelViewController.Controllers
         {
             try
             {
+                UserAuthenticatedToChannel(token, name);
                 List<BsonDocument> bson;
                 IQueryCollection filter = Request.Query;
                 if (filter.Count() > 0)
@@ -115,7 +117,7 @@ namespace BachelorModelViewController.Controllers
                 }
                 return Json(bson.Select(x => x.ToJson()));
             }
-            catch (IndexOutOfRangeException e)
+            catch (Exception e)
             {
                 return Json(new { message = e.Message });
             }
@@ -128,6 +130,7 @@ namespace BachelorModelViewController.Controllers
         {
             try
             {
+                UserAuthenticatedToChannel(token, name);
                 List<BsonDocument> bson;
                 IQueryCollection filter = Request.Query;
                 if (filter.Count() > 0)
@@ -140,7 +143,7 @@ namespace BachelorModelViewController.Controllers
                 }
                 return Json(bson.Select(x => x.ToJson()));
             }
-            catch (IndexOutOfRangeException e)
+            catch (Exception e)
             {
                 return Json(new { message = e.Message });
             }
@@ -164,8 +167,9 @@ namespace BachelorModelViewController.Controllers
             }
         }
 
-        private void UserAuthenticatedToChannel(string token)
+        private void UserAuthenticatedToChannel(string token, string channelName)
         {
+            //var accessRestriction = _context.
         }
 
 
