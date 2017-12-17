@@ -182,6 +182,7 @@ namespace BachelorModelViewController.Controllers
                 {
                     return BadRequest();
                 }
+                PostToCollectionInternal(name, item);
                 return Json(new { success = "Valid" });
             }
             catch (Exception e)
@@ -189,7 +190,7 @@ namespace BachelorModelViewController.Controllers
                 return Json(new { message = e.Message });
             }
         }
-        private List<BsonDocument> GetAllFromCollectionInternal(string collectionName)
+        private List<BsonDocument> PostToCollectionInternal(string collectionName, Object item)
         {
             if (_mongoOperations.CollectionExists(collectionName))
             {
