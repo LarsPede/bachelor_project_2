@@ -11,6 +11,7 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
     public class CreateViewModel
     {
         [Required]
+        [RegularExpression("[^\\s]+", ErrorMessage = "You are not allowed to have spaces in your channel name!")]
         public string Name { get; set; }
         public string Description { get; set; }
         public User User { get; set; }
@@ -18,5 +19,6 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
         public IEnumerable<Group> AccessibleGroups { get; set; }
         public int AccessRestriction { get; set; }
         public IdentityRole DemandedRole { get; set; }
+        public string JsonContentAsString { get; set; }
     }
 }

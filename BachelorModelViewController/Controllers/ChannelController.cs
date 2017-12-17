@@ -110,7 +110,7 @@ namespace BachelorModelViewController.Controllers
         // POST: Channel/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(CreateViewModel model, IFormCollection collection)
+        public ActionResult Create(CreateViewModel model)
         {
             try
             {
@@ -124,9 +124,10 @@ namespace BachelorModelViewController.Controllers
                     {
                         channel.User = model.User;
                     }
+                    return RedirectToAction("Index");
                 }
+                return View(model);
 
-                return RedirectToAction("Index");
             }
             catch
             {
