@@ -23,9 +23,32 @@ namespace BachelorModelViewController.Data
             _context = new MongoDbContext(settings);
         }
 
-        public Task<IActionResult> AddToCollection(string collectionName, BsonDocument document)
+        public Task<bool> AddToCollection(string collectionName, BsonDocument document)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.GetMongoCollection(collectionName).InsertOne(document);
+                return new Task<bool>(() => true);
+            }
+            catch(Exception e)
+            {
+                throw(e);
+            }
+        }
+
+        public Task<int> AddToCollection(string collectionName, IEnumerable<BsonDocument> documents)
+        {
+            try
+            {
+                var collection = _context.GetMongoCollection(collectionName);
+
+                collection.InsertMany(documents);
+                return new Task<int>(() => documents.Count());
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
 
         public bool CollectionExists(string collectionName)
