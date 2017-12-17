@@ -281,6 +281,5 @@ namespace BachelorModelViewController.Controllers
             }
         }
 
-
     }
 }
