@@ -168,6 +168,39 @@ namespace BachelorModelViewController.Controllers
             }
         }
 
+        // GET: api/get_all_channel_data/{channelName}/{userToken}
+        [Route("post_to_channel/{name}/{token}")]
+        [HttpPost]
+        public IActionResult PostCollectionData(string name, string token, [FromBody] Object item)
+        {
+
+            try
+            {
+                UserPostAuthenticatedToChannel(token, name);
+                
+                if (item == null)
+                {
+                    return BadRequest();
+                }
+                return Json(new { success = "Valid" });
+            }
+            catch (Exception e)
+            {
+                return Json(new { message = e.Message });
+            }
+        }
+        private List<BsonDocument> GetAllFromCollectionInternal(string collectionName)
+        {
+            if (_mongoOperations.CollectionExists(collectionName))
+            {
+                return _mongoOperations.GetAllFromCollection(collectionName).Result;
+            }
+            else
+            {
+                throw new IndexOutOfRangeException("The supplier hasn't made a first upload. The data-collection you are looking for does not exist.");
+            }
+        }
+
         private void UserAuthenticatedToChannel(string token, string channelName)
         {
             try
@@ -184,19 +217,53 @@ namespace BachelorModelViewController.Controllers
                         {
                             throw new Exception();
                         }
-                        if (accessRestriction.AccessLevel == _roleManager.FindByNameAsync("Administrator").Result 
+                        if (accessRestriction.AccessLevel == _roleManager.FindByNameAsync("Administrator").Result
                             && _roleManager.FindByNameAsync("Administrator").Result != association.Role)
                         {
                             throw new Exception();
                         }
-                        if (accessRestriction.AccessLevel == _roleManager.FindByNameAsync("Supplier").Result 
-                            && (_roleManager.FindByNameAsync("Administrator").Result != association.Role 
+                        if (accessRestriction.AccessLevel == _roleManager.FindByNameAsync("Supplier").Result
+                            && (_roleManager.FindByNameAsync("Administrator").Result != association.Role
                                 || _roleManager.FindByNameAsync("Supplier").Result != association.Role))
                         {
                             throw new Exception();
                         }
                     }
 
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                throw new KeyNotFoundException("You are either trying to access a channel that doesn't exist, or your user-token is wrong.");
+            }
+            catch (NullReferenceException)
+            {
+                throw new NullReferenceException("The channel has not been created correctly. Ask info@cupid.cupid for assistance.");
+            }
+            catch (Exception)
+            {
+                throw new UnauthorizedAccessException("You are not authorized to access this channel.");
+            }
+        }
+        private void UserPostAuthenticatedToChannel(string token, string channelName)
+        {
+            try
+            {
+                var channel = _context.Channels.Where(x => x.Name == channelName).First();
+                var user = _context.Users.Where(x => x.Token == Guid.Parse(token)).First();
+                if (channel.UserId != null)
+                {
+                    if (channel.UserId != user.Id)
+                    {
+                        throw new UnauthorizedAccessException();
+                    }
+                } else
+                {
+                    var association = _context.Associations.Where(x => x.UserId == user.Id && x.GroupId == channel.GroupId).First();
+                    if (association.RoleId != _roleManager.FindByNameAsync("Administrator").Result.Id || association.RoleId != _roleManager.FindByNameAsync("Supplier").Result.Id)
+                    {
+                        throw new UnauthorizedAccessException();
+                    }
                 }
             }
             catch (InvalidOperationException)
