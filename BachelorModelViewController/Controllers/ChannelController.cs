@@ -124,9 +124,10 @@ namespace BachelorModelViewController.Controllers
                     {
                         channel.User = model.User;
                     }
+                    return RedirectToAction("Index");
                 }
+                return View(model);
 
-                return RedirectToAction("Index");
             }
             catch
             {
