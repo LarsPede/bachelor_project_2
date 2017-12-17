@@ -182,7 +182,8 @@ namespace BachelorModelViewController.Controllers
                 {
                     return BadRequest();
                 }
-                BsonDocument bsonItem = value.ToBsonDocument;
+                string json = JsonConvert.SerializeObject(value);
+                BsonDocument bsonItem = BsonSerializer.Deserialize<BsonDocument>(json);
                 if (PostSingleEntryInternal(name, bsonItem))
                 {
                     return Json(new { success = true });

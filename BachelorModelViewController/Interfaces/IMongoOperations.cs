@@ -27,7 +27,7 @@ namespace BachelorModelViewController.Interfaces
         Task<IActionResult> GetFromCollection(string collectionName, string id);
 
         // add new document
-        Task<IActionResult> AddToCollection(string collectionName, BsonDocument document);
+        Task<bool> AddToCollection(string collectionName, BsonDocument document);
 
         // add multiple new documents
         Task<int> AddToCollection(string collectionName, IEnumerable<BsonDocument> documents);
