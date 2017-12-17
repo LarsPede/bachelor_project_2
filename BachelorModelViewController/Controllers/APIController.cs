@@ -13,6 +13,7 @@ using MongoDB.Bson;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Options;
 using BachelorModelViewController.Interfaces;
+using MongoDB.Bson.Serialization;
 
 namespace BachelorModelViewController.Controllers
 {
@@ -52,7 +53,7 @@ namespace BachelorModelViewController.Controllers
                 UserAuthenticatedToChannel(token, name);
                 var bson = GetAllFromCollectionInternal(name);
 
-                return Json(bson.Select(x => x.ToJson()));
+                return Json(bson.Select(x => BsonSerializer.Deserialize<Object>(x)));
             } catch (Exception e)
             {
                 return Json(new { message = e.Message });
@@ -65,7 +66,7 @@ namespace BachelorModelViewController.Controllers
                 return _mongoOperations.GetAllFromCollection(collectionName).Result;
             } else
             {
-                throw new IndexOutOfRangeException("The collection you are looking for, doesn't exist");
+                throw new IndexOutOfRangeException("The supplier hasn't made a first upload. The data-collection you are looking for does not exist.");
             }
         }
         
@@ -78,7 +79,7 @@ namespace BachelorModelViewController.Controllers
             {
                 UserAuthenticatedToChannel(token, name);
                 var bson = GetAllFromCollectionFromInternal(name, time);
-                return Json(bson.Select(x => x.ToJson()));
+                return Json(bson.Select(x => BsonSerializer.Deserialize<Object>(x)));
             }
             catch (Exception e)
             {
@@ -93,7 +94,7 @@ namespace BachelorModelViewController.Controllers
             }
             else
             {
-                throw new IndexOutOfRangeException("The collection you are looking for, doesn't exist");
+                throw new IndexOutOfRangeException("The supplier hasn't made a first upload. The data-collection you are looking for does not exist.");
             }
         }
 
@@ -115,7 +116,7 @@ namespace BachelorModelViewController.Controllers
                 {
                     bson = GetAllFromCollectionInternal(name);
                 }
-                return Json(bson.Select(x => x.ToJson()));
+                return Json(bson.Select(x => BsonSerializer.Deserialize<Object>(x)));
             }
             catch (Exception e)
             {
@@ -141,7 +142,7 @@ namespace BachelorModelViewController.Controllers
                 {
                     bson = GetAllFromCollectionInternal(name);
                 }
-                return Json(bson.Select(x => x.ToJson()));
+                return Json(bson.Select(x => BsonSerializer.Deserialize<Object>(x)));
             }
             catch (Exception e)
             {
@@ -163,13 +164,52 @@ namespace BachelorModelViewController.Controllers
             }
             else
             {
-                throw new IndexOutOfRangeException("The collection you are looking for, doesn't exist");
+                throw new IndexOutOfRangeException("The supplier hasn't made a first upload. The data-collection you are looking for does not exist.");
             }
         }
 
         private void UserAuthenticatedToChannel(string token, string channelName)
         {
-            //var accessRestriction = _context.
+            try
+            {
+                var channel = _context.Channels.Where(x => x.Name == channelName).First();
+                if (channel.AccessRestriction.GroupRestricted == true || channel.AccessRestriction.UserRestricted == true)
+                {
+                    var user = _context.Users.Where(x => x.Token == Guid.Parse(token)).First();
+                    if (channel.AccessRestriction.GroupRestricted == true)
+                    {
+                        var association = _context.Associations.Where(x => x.User == user && x.Group == channel.Group && x.Role != null).FirstOrDefault();
+                        if (association == null)
+                        {
+                            throw new Exception();
+                        }
+                        if (channel.AccessRestriction.AccessLevel == _roleManager.FindByNameAsync("Administrator").Result 
+                            && _roleManager.FindByNameAsync("Administrator").Result != association.Role)
+                        {
+                            throw new Exception();
+                        }
+                        if (channel.AccessRestriction.AccessLevel == _roleManager.FindByNameAsync("Supplier").Result 
+                            && (_roleManager.FindByNameAsync("Administrator").Result != association.Role 
+                                || _roleManager.FindByNameAsync("Supplier").Result != association.Role))
+                        {
+                            throw new Exception();
+                        }
+                    }
+
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                throw new KeyNotFoundException("You are either trying to access a channel that doesn't exist, or your user-token is wrong.");
+            }
+            catch (NullReferenceException)
+            {
+                throw new NullReferenceException("The channel has not been created correctly. Ask info@cupid.cupid for assistance.");
+            }
+            catch (Exception)
+            {
+                throw new UnauthorizedAccessException("You are not authorized to access this channel.");
+            }
         }
 
 
