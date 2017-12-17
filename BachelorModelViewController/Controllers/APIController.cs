@@ -168,33 +168,38 @@ namespace BachelorModelViewController.Controllers
             }
         }
 
-        // GET: api/get_all_channel_data/{channelName}/{userToken}
+        // POST: api/post_to_channel/{channelName}/{userToken}
         [Route("post_to_channel/{name}/{token}")]
         [HttpPost]
-        public IActionResult PostCollectionData(string name, string token, [FromBody] Object item)
+        public IActionResult PostSingleEntry(string name, string token, [FromBody] dynamic value)
         {
-
+            var start = "here";
             try
             {
                 UserPostAuthenticatedToChannel(token, name);
                 
-                if (item == null)
+                if (value == null)
                 {
                     return BadRequest();
                 }
-                PostToCollectionInternal(name, item);
-                return Json(new { success = "Valid" });
+                BsonDocument bsonItem = value.ToBsonDocument;
+                if (PostSingleEntryInternal(name, bsonItem))
+                {
+                    return Json(new { success = true });
+                }
+                return Json(new { error = true });
             }
             catch (Exception e)
             {
                 return Json(new { message = e.Message });
             }
         }
-        private List<BsonDocument> PostToCollectionInternal(string collectionName, Object item)
+        private bool PostSingleEntryInternal(string collectionName, BsonDocument item)
         {
             if (_mongoOperations.CollectionExists(collectionName))
             {
-                return _mongoOperations.GetAllFromCollection(collectionName).Result;
+                _mongoOperations.AddToCollection(collectionName, item);
+                return true;
             }
             else
             {
@@ -261,7 +266,7 @@ namespace BachelorModelViewController.Controllers
                 } else
                 {
                     var association = _context.Associations.Where(x => x.UserId == user.Id && x.GroupId == channel.GroupId).First();
-                    if (association.RoleId != _roleManager.FindByNameAsync("Administrator").Result.Id || association.RoleId != _roleManager.FindByNameAsync("Supplier").Result.Id)
+                    if (association.RoleId != _roleManager.FindByNameAsync("Administrator").Result.Id && association.RoleId != _roleManager.FindByNameAsync("Supplier").Result.Id)
                     {
                         throw new UnauthorizedAccessException();
                     }
