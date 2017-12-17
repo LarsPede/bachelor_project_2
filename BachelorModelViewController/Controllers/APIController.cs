@@ -44,12 +44,12 @@ namespace BachelorModelViewController.Controllers
         // GET: api/get_all_channel_data/{channelName}/{userToken}
         [Route("get_all_channel_data/{name}/{token}")]
         [HttpGet]
-        public IActionResult GetMongoCollection(string name, string id = null)
+        public IActionResult GetMongoCollection(string name, string token = null)
         {
 
             try
             {
-                UserAuthenticatedToChannel(id);
+                UserAuthenticatedToChannel(token);
                 var bson = GetAllFromCollectionInternal(name);
 
                 return Json(bson.Select(x => x.ToJson()));
@@ -69,10 +69,10 @@ namespace BachelorModelViewController.Controllers
             }
         }
         
-        // GET: api/get_mongo_collection_from/{collectionName}/{unixTimeInSeconds}
-        [Route("get_mongo_collection_from/{name}/{time}")]
+        // GET: api/get_mongo_collection_from/{collectionName}/{unixTimeInSeconds}/{token}
+        [Route("get_mongo_collection_from/{name}/{time}/{token}")]
         [HttpGet]
-        public IActionResult GetAllFromCollectionFrom(string name, int time)
+        public IActionResult GetAllFromCollectionFrom(string name, int time, string token = null)
         {
             try
             {
@@ -96,10 +96,10 @@ namespace BachelorModelViewController.Controllers
             }
         }
 
-        // GET: api/get_mongo_collection_filter/{collectionName}?filterByQuery
-        [Route("get_mongo_collection_or_filter/{name}")]
+        // GET: api/get_mongo_collection_filter/{collectionName}/{token}?filterByQuery
+        [Route("get_mongo_collection_or_filter/{name}/{token}")]
         [HttpGet]
-        public IActionResult GetAllFromCollectionByOrFilter(string name)
+        public IActionResult GetAllFromCollectionByOrFilter(string name, string token = null)
         {
             try
             {
@@ -121,10 +121,10 @@ namespace BachelorModelViewController.Controllers
             }
         }
 
-        // GET: api/get_mongo_collection_filter/{collectionName}?filterByQuery
-        [Route("get_mongo_collection_and_filter/{name}")]
+        // GET: api/get_mongo_collection_filter/{collectionName}/{token}?filterByQuery
+        [Route("get_mongo_collection_and_filter/{name}/{token}")]
         [HttpGet]
-        public IActionResult GetAllFromCollectionByAndFilter(string name)
+        public IActionResult GetAllFromCollectionByAndFilter(string name, string token = null)
         {
             try
             {
@@ -164,7 +164,7 @@ namespace BachelorModelViewController.Controllers
             }
         }
 
-        private void UserAuthenticatedToChannel(string id)
+        private void UserAuthenticatedToChannel(string token)
         {
         }
 
