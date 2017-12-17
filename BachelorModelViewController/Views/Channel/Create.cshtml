@@ -28,7 +28,7 @@
                 <label asp-for="Group" class="col-md-2 control-label"></label>
                 <div class="col-md-10">
                     @Html.DropDownListFor(
-                            model => model.Group.Id,
+                            model => model.GroupId,
                             new SelectList(
                                 Model.AccessibleGroups,
                                 "Id",
@@ -40,12 +40,12 @@
         } else if (Model.Group != null)
         {
             <div class="form-group">
-                @Html.HiddenFor(m => m.Group.Id)
+                @Html.HiddenFor(m => m.GroupId)
             </div>
         } else
         {
             <div class="form-group">
-                @Html.HiddenFor(m => m.User.Id)
+                @Html.HiddenFor(m => m.UserId)
             </div>
         }
          <div class="form-group">

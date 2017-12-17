@@ -173,22 +173,23 @@ namespace BachelorModelViewController.Controllers
             try
             {
                 var channel = _context.Channels.Where(x => x.Name == channelName).First();
-                if (channel.AccessRestriction.GroupRestricted == true || channel.AccessRestriction.UserRestricted == true)
+                var accessRestriction = _context.AccessRestrictions.Where(x => x.Id == channel.AccessRestrictionId).First();
+                if (accessRestriction.GroupRestricted == true || accessRestriction.UserRestricted == true)
                 {
                     var user = _context.Users.Where(x => x.Token == Guid.Parse(token)).First();
-                    if (channel.AccessRestriction.GroupRestricted == true)
+                    if (accessRestriction.GroupRestricted == true)
                     {
-                        var association = _context.Associations.Where(x => x.User == user && x.Group == channel.Group && x.Role != null).FirstOrDefault();
+                        var association = _context.Associations.Where(x => x.UserId == user.Id && x.GroupId == channel.GroupId && x.Role != null).FirstOrDefault();
                         if (association == null)
                         {
                             throw new Exception();
                         }
-                        if (channel.AccessRestriction.AccessLevel == _roleManager.FindByNameAsync("Administrator").Result 
+                        if (accessRestriction.AccessLevel == _roleManager.FindByNameAsync("Administrator").Result 
                             && _roleManager.FindByNameAsync("Administrator").Result != association.Role)
                         {
                             throw new Exception();
                         }
-                        if (channel.AccessRestriction.AccessLevel == _roleManager.FindByNameAsync("Supplier").Result 
+                        if (accessRestriction.AccessLevel == _roleManager.FindByNameAsync("Supplier").Result 
                             && (_roleManager.FindByNameAsync("Administrator").Result != association.Role 
                                 || _roleManager.FindByNameAsync("Supplier").Result != association.Role))
                         {

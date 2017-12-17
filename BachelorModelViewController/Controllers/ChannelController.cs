@@ -117,13 +117,36 @@ namespace BachelorModelViewController.Controllers
                 var channel = new Channel();
                 if (ModelState.IsValid)
                 {
-                    if (model.Group != null)
+                    switch (model.AccessRestriction)
                     {
-                        channel.Group = model.Group;
-                    } else
-                    {
-                        channel.User = model.User;
+                        case 1:
+                            channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == 1).First();
+                            break;
+                        case 2:
+                            channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == 2).First();
+                            break;
+                        case 3:
+                            if (model.DemandedRole.Id == _roleManager.FindByNameAsync("Administrator").Result.Id)
+                            {
+                                channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == 5).First();
+                            } else if (model.DemandedRole.Id == _roleManager.FindByNameAsync("Supplier").Result.Id)
+                            {
+                                channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == 4).First();
+                            } else
+                            {
+                                channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == 3).First();
+                            }
+                            break;
+                        default:
+                            channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == 1).First();
+                            break;
                     }
+                    channel.Group = _context.Groups.Where(x => x.Id == model.GroupId).FirstOrDefault();
+                    channel.User = _context.Users.Where(x => x.Id == model.UserId).FirstOrDefault();
+                    channel.Name = model.Name;
+                    channel.Description = channel.Description;
+                    _context.Add(channel);
+                    _context.SaveChanges();
                     return RedirectToAction("Index");
                 }
                 return View(model);
