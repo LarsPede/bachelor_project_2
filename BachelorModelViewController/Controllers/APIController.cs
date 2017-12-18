@@ -71,7 +71,7 @@ namespace BachelorModelViewController.Controllers
         }
         
         // GET: api/get_mongo_collection_from/{collectionName}/{unixTimeInSeconds}/{token}
-        [Route("get_mongo_collection_from/{name}/{time}/{token}")]
+        [Route("get_all_channel_data_from/{name}/{time}/{token}")]
         [HttpGet]
         public IActionResult GetAllFromCollectionFrom(string name, int time, string token = null)
         {
@@ -99,7 +99,7 @@ namespace BachelorModelViewController.Controllers
         }
 
         // GET: api/get_mongo_collection_filter/{collectionName}/{token}?filterByQuery
-        [Route("get_mongo_collection_or_filter/{name}/{token}")]
+        [Route("get_or_filtered_channel_data/{name}/{token}")]
         [HttpGet]
         public IActionResult GetAllFromCollectionByOrFilter(string name, string token = null)
         {
@@ -125,7 +125,7 @@ namespace BachelorModelViewController.Controllers
         }
 
         // GET: api/get_mongo_collection_filter/{collectionName}/{token}?filterByQuery
-        [Route("get_mongo_collection_and_filter/{name}/{token}")]
+        [Route("get_and_filtered_channel_data/{name}/{token}")]
         [HttpGet]
         public IActionResult GetAllFromCollectionByAndFilter(string name, string token = null)
         {
@@ -169,11 +169,10 @@ namespace BachelorModelViewController.Controllers
         }
 
         // POST: api/post_to_channel/{channelName}/{userToken}
-        [Route("post_to_channel/{name}/{token}")]
+        [Route("post_channel_data/{name}/{token}")]
         [HttpPost]
         public IActionResult PostSingleEntry(string name, string token, [FromBody] dynamic value)
         {
-            var start = "here";
             try
             {
                 UserPostAuthenticatedToChannel(token, name);
