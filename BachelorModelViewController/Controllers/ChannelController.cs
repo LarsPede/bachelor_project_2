@@ -89,12 +89,20 @@ namespace BachelorModelViewController.Controllers
         }
 
         // GET: Channel/Create
-        public async Task<ActionResult> Create(bool asUser)
+        public async Task<ActionResult> Create(bool? asUser)
         {
             var createView = new CreateViewModel();
+            if (asUser != null)
+            {
+                createView.AsUser = asUser;
+            }
+            if (createView.AsUser == null)
+            {
+                return RedirectToAction("Index");
+            }
             var currentUser = await _userManager.GetUserAsync(HttpContext.User);
             var adminRole = await _roleManager.FindByNameAsync("Administrator");
-            if (asUser)
+            if (createView.AsUser.Value)
             {
                 createView.User = currentUser;
             } else
@@ -111,32 +119,55 @@ namespace BachelorModelViewController.Controllers
         // POST: Channel/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(CreateViewModel model)
+        public async Task<ActionResult> Create(CreateViewModel model)
         {
             try
             {
                 var channel = new Channel();
                 if (ModelState.IsValid)
                 {
-                    if (model.Group != null)
+                    switch (model.AccessRestriction)
                     {
-                        channel.Group = model.Group;
-                    } else
-                    {
-                        channel.User = model.User;
+                        case 1:
+                            channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == 1).First();
+                            break;
+                        case 2:
+                            channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == 2).First();
+                            break;
+                        case 3:
+                            if (model.DemandedRole.Id == _roleManager.FindByNameAsync("Administrator").Result.Id)
+                            {
+                                channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == 5).First();
+                            } else if (model.DemandedRole.Id == _roleManager.FindByNameAsync("Supplier").Result.Id)
+                            {
+                                channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == 4).First();
+                            } else
+                            {
+                                channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == 3).First();
+                            }
+                            break;
+                        default:
+                            channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == 1).First();
+                            break;
                     }
-
-                    var dh1 = new DatatypeHelper();
-
-                    var modelObject1 = dh1.HandleAsObject(model.JsonContentAsString);
-
+                    channel.Group = _context.Groups.Where(x => x.Id == model.GroupId).FirstOrDefault();
+                    channel.User = _context.Users.Where(x => x.Id == model.UserId).FirstOrDefault();
+                    channel.Name = model.Name;
+                    channel.Description = channel.Description;
+                    _context.Add(channel);
+                    _context.SaveChanges();
                     return RedirectToAction("Index");
                 }
-                var dh = new DatatypeHelper();
-
-                var modelObject = dh.HandleAsObject(model.JsonContentAsString);
-
-
+                if (!model.AsUser.Value)
+                { 
+                    var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                    var adminRole = await _roleManager.FindByNameAsync("Administrator");
+                    model.AccessibleGroups = _context.Associations.Where(x => x.User == currentUser && x.Role == adminRole).Select(x => x.Group).ToList();
+                    if (model.AccessibleGroups.Count() == 1)
+                    {
+                        model.Group = model.AccessibleGroups.First();
+                    }
+                }
                 return View(model);
 
             }
