@@ -87,7 +87,7 @@ namespace BachelorModelViewController.Data
                 IFormatProvider provider = CultureInfo.CurrentCulture;
 
                 string key = queryStringFilter.Key.Replace("__gt", "");
-                key = queryStringFilter.Key.Replace("__lt", "");
+                key = key.Replace("__lt", "");
 
                 int value;
                 if (int.TryParse(queryStringFilter.Value, NumberStyles.Integer, provider, out value))
@@ -140,7 +140,7 @@ namespace BachelorModelViewController.Data
                 IFormatProvider provider = CultureInfo.CurrentCulture;
 
                 string key = queryStringFilter.Key.Replace("__gt", "");
-                key = queryStringFilter.Key.Replace("__lt", "");
+                key = key.Replace("__lt", "");
 
                 int value;
                 if (int.TryParse(queryStringFilter.Value, NumberStyles.Integer, provider, out value))

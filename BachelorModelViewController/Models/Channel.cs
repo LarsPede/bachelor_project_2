@@ -17,7 +17,7 @@ namespace BachelorModelViewController.Models
         public string UserId { get; set; }
         [ForeignKey("UserId")]
         public User User { get; set; }
-        public int GroupId { get; set; }
+        public int? GroupId { get; set; }
         [ForeignKey("GroupId")]
         public Group Group { get; set; }
         public int AccessRestrictionId { get; set; }

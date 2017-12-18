@@ -37,7 +37,7 @@ namespace BachelorModelViewController.Data
                 return false;
             }
         }
-        public bool DeleteDatabase(string name)
+        public bool DeleteCollection(string name)
         {
             try
             {

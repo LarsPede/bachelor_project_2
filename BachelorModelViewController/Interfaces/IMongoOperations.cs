@@ -42,10 +42,10 @@ namespace BachelorModelViewController.Interfaces
         Task<IActionResult> UpdateInCollection(string collectionName, string id, string body);
 
         // should be used with high cautious
-        Task<IActionResult> RemoveAllFromCollection(string collectionName);
+        bool RemoveAllFromCollection(string collectionName);
 
         // should be used with high cautious
-        Task<IActionResult> DeleteCollection(string collectionName);
+        bool DeleteCollection(string collectionName);
 
         // check if Mongo contains collection
         bool CollectionExists(string collectionName);
