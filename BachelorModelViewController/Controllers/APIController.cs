@@ -185,9 +185,18 @@ namespace BachelorModelViewController.Controllers
                 BsonDocument bsonItem = BsonSerializer.Deserialize<BsonDocument>(json);
                 if (PostSingleEntryInternal(name, bsonItem))
                 {
-                    return Json(new { success = true });
+                    return Json(
+                        new
+                        {
+                            send_as_a_string = true,
+                            success = true
+                        });
                 }
                 return Json(new { error = true });
+            }
+            catch (FormatException)
+            {
+                return PostManyEntries(name, token, value);
             }
             catch (Exception e)
             {
@@ -199,6 +208,50 @@ namespace BachelorModelViewController.Controllers
             if (_mongoOperations.CollectionExists(collectionName))
             {
                 _mongoOperations.AddToCollection(collectionName, item);
+                return true;
+            }
+            else
+            {
+                throw new IndexOutOfRangeException("The supplier hasn't made a first upload. The data-collection you are looking for does not exist.");
+            }
+        }
+
+        // POST: api/post_to_channel/{channelName}/{userToken}
+        [Route("post_many_channel_data/{name}/{token}")]
+        [HttpPost]
+        public IActionResult PostManyEntries(string name, string token, [FromBody] dynamic value)
+        {
+            try
+            {
+                UserPostAuthenticatedToChannel(token, name);
+
+                if (value == null)
+                {
+                    return BadRequest();
+                }
+                string json = JsonConvert.SerializeObject(value);
+                List<BsonDocument> bsonItemList = BsonSerializer.Deserialize<List<BsonDocument>>(json);
+                if (PostManyEntriesInternal(name, bsonItemList))
+                {
+                    return Json(
+                        new
+                        {
+                            send_as_a_list = true,
+                            success = true
+                        });
+                }
+                return Json(new { error = true });
+            }
+            catch (Exception e)
+            {
+                return Json(new { message = e.Message });
+            }
+        }
+        private bool PostManyEntriesInternal(string collectionName, List<BsonDocument> itemList)
+        {
+            if (_mongoOperations.CollectionExists(collectionName))
+            {
+                _mongoOperations.AddToCollection(collectionName, itemList);
                 return true;
             }
             else
