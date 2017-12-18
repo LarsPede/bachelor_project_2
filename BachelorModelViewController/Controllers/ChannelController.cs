@@ -8,6 +8,7 @@ using BachelorModelViewController.Models;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity;
 using BachelorModelViewController.Data;
+using BachelorModelViewController.Helpers;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using BachelorModelViewController.Models.ViewModels.ChannelViewModels;
 
@@ -124,12 +125,22 @@ namespace BachelorModelViewController.Controllers
                     {
                         channel.User = model.User;
                     }
+
+                    var dh1 = new DatatypeHelper();
+
+                    var modelObject1 = dh1.HandleAsObject(model.JsonContentAsString);
+
                     return RedirectToAction("Index");
                 }
+                var dh = new DatatypeHelper();
+
+                var modelObject = dh.HandleAsObject(model.JsonContentAsString);
+
+
                 return View(model);
 
             }
-            catch
+            catch(Exception e)
             {
                 return View();
             }

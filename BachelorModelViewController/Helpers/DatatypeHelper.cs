@@ -1,117 +1,28 @@
+﻿using BachelorModelViewController.Models.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using BachelorModelViewController.Models.Data;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using BachelorModelViewController.Data;
-using BachelorModelViewController.Models;
 
-namespace BachelorModelViewController.Controllers.Data
+namespace BachelorModelViewController.Helpers
 {
-    public class DatatypeController : Controller
+    public class DatatypeHelper
     {
-
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserManager<User> _userManager;
-        private readonly ApplicationDbContext _context;
-
-        // GET: Datatype
-        public ActionResult Index()
+        public DatatypeHelper()
         {
-            
 
-
-            return View();
-        }
-
-        // GET: Datatype/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: Datatype/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Datatype/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Datatype/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Datatype/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Datatype/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Datatype/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
         }
 
         public DatatypeModel HandleAsObject(string s)
         {
-            string temp = s.Remove(s.IndexOf('{')).Remove(s.LastIndexOf('}'));
+            string temp = s;
+            temp = temp.Remove(s.IndexOf('{')).Remove(s.LastIndexOf('}'));
 
             ClassModel result = new ClassModel();
 
             List<Tuple<string, string>> tempSeperated = Seperate(temp);
 
-            foreach(Tuple<string,string> t in tempSeperated)
+            foreach (Tuple<string, string> t in tempSeperated)
             {
                 if (t.Item2.Contains('{') || t.Item2.Contains('}'))
                 {
@@ -121,7 +32,7 @@ namespace BachelorModelViewController.Controllers.Data
                 {
                     if (t.Item2.Contains('[') || t.Item2.Contains(']'))
                     {
-                        result.properties.Add(new PropertyModel() { property = HandleAsArray(t.Item2)});
+                        result.properties.Add(new PropertyModel() { property = HandleAsArray(t.Item2) });
                         result.properties.Last().property.name = t.Item1;
                     }
                     else
@@ -138,7 +49,7 @@ namespace BachelorModelViewController.Controllers.Data
             return result;
         }
 
-        public List<Tuple<string,string>> Seperate(string s)
+        public List<Tuple<string, string>> Seperate(string s)
         {
             List<Tuple<string, string>> result = new List<Tuple<string, string>>();
             List<int> seperationLocations = new List<int>();
@@ -146,9 +57,9 @@ namespace BachelorModelViewController.Controllers.Data
 
             string name = "";
             string value = "";
-            
+
             bool inObjectOrArray = false;
-            
+
             List<string> sections = new List<string>();
             string tempSection = "";
 
@@ -157,7 +68,7 @@ namespace BachelorModelViewController.Controllers.Data
             {
                 if (inObjectOrArray)
                 {
-                    if(c == skips.Last())
+                    if (c == skips.Last())
                     {
                         tempSection += c;
                         skips.Remove(skips.LastIndexOf(c));
@@ -186,14 +97,14 @@ namespace BachelorModelViewController.Controllers.Data
                     }
                 }
             }
-            
+
             // run thorugh sections
-            foreach(string section in sections)
+            foreach (string section in sections)
             {
                 section.Remove(section.IndexOf('\"'));
                 name = section.Split('\"')[0];
-                
-                for(int i = section.IndexOf(':'); i < section.Length; i++)
+
+                for (int i = section.IndexOf(':'); i < section.Length; i++)
                 {
                     value += section[i];
                 }

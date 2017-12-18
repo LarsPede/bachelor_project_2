@@ -36,7 +36,7 @@ namespace BachelorModelViewController.Data
             }
         }
 
-        public Task<int> AddToCollection(string collectionName, IEnumerable<BsonDocument> documents)
+        public Task<int> AddMultipleToCollection(string collectionName, IEnumerable<BsonDocument> documents)
         {
             try
             {
