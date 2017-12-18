@@ -16,7 +16,8 @@ namespace BachelorModelViewController.Helpers
         public DatatypeModel HandleAsObject(string s)
         {
             string temp = s;
-            temp = temp.Remove(s.IndexOf('{')).Remove(s.LastIndexOf('}'));
+            temp.Remove(s.IndexOf('{'));
+            temp.Remove(s.LastIndexOf('}') - 1);
 
             ClassModel result = new ClassModel();
 
@@ -68,14 +69,23 @@ namespace BachelorModelViewController.Helpers
             {
                 if (inObjectOrArray)
                 {
-                    if (c == skips.Last())
+                    if (c == ',')
                     {
-                        tempSection += c;
-                        skips.Remove(skips.LastIndexOf(c));
-                        if (string.IsNullOrEmpty(skips))
+                        sections.Add(tempSection);
+                        tempSection = "";
+                    }
+                    else
+                    {
+                        if (c == skips.Last())
                         {
-                            inObjectOrArray = false;
+                            tempSection += c;
+                            skips.Remove(skips.LastIndexOf(c));
+                            if (string.IsNullOrEmpty(skips))
+                            {
+                                inObjectOrArray = false;
+                            }
                         }
+                        tempSection += c;
                     }
                 }
                 else
@@ -97,12 +107,13 @@ namespace BachelorModelViewController.Helpers
                     }
                 }
             }
-
-            // run thorugh sections
-            foreach (string section in sections)
+            sections.Add(tempSection);
+            // run through sections
+            foreach (string sectionF in sections)
             {
-                section.Remove(section.IndexOf('\"'));
-                name = section.Split('\"')[0];
+                string section = sectionF.Replace("\\\"", "");
+                
+                name = section.Split(':')[0];
 
                 for (int i = section.IndexOf(':'); i < section.Length; i++)
                 {

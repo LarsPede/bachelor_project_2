@@ -251,7 +251,7 @@ namespace BachelorModelViewController.Controllers
         {
             if (_mongoOperations.CollectionExists(collectionName))
             {
-                _mongoOperations.AddToCollection(collectionName, itemList);
+                _mongoOperations.AddMultipleToCollection(collectionName, itemList);
                 return true;
             }
             else

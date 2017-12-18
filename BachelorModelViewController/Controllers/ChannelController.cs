@@ -154,6 +154,15 @@ namespace BachelorModelViewController.Controllers
                     channel.User = _context.Users.Where(x => x.Id == model.UserId).FirstOrDefault();
                     channel.Name = model.Name;
                     channel.Description = channel.Description;
+
+                    #region data
+
+                    var datahelper = new DatatypeHelper();
+                    var something = datahelper.HandleAsObject(model.JsonContentAsString);
+
+
+                    #endregion
+
                     _context.Add(channel);
                     _context.SaveChanges();
                     return RedirectToAction("Index");
