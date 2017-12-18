@@ -30,7 +30,7 @@ namespace BachelorModelViewController.Interfaces
         Task<bool> AddToCollection(string collectionName, BsonDocument document);
 
         // add multiple new documents
-        Task<int> AddToCollection(string collectionName, IEnumerable<BsonDocument> documents);
+        Task<int> AddMultipleToCollection(string collectionName, IEnumerable<BsonDocument> documents);
 
         // remove a single document
         Task<IActionResult> RemoveFromCollection(string collectionName, string id);
