@@ -15,7 +15,7 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
         public string Name { get; set; }
         public string Description { get; set; }
         public string UserId { get; set; }
-        [ForeignKey("GroupId")]
+        [ForeignKey("UserId")]
         public User User { get; set; }
         public int? GroupId { get; set; }
         [ForeignKey("GroupId")]
@@ -24,5 +24,6 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
         public int AccessRestriction { get; set; }
         public IdentityRole DemandedRole { get; set; }
         public string JsonContentAsString { get; set; }
+        public bool? AsUser { get; set; }
     }
 }

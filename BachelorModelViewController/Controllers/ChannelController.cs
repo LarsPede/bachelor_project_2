@@ -88,12 +88,20 @@ namespace BachelorModelViewController.Controllers
         }
 
         // GET: Channel/Create
-        public async Task<ActionResult> Create(bool asUser)
+        public async Task<ActionResult> Create(bool? asUser)
         {
             var createView = new CreateViewModel();
+            if (asUser != null)
+            {
+                createView.AsUser = asUser;
+            }
+            if (createView.AsUser == null)
+            {
+                return RedirectToAction("Index");
+            }
             var currentUser = await _userManager.GetUserAsync(HttpContext.User);
             var adminRole = await _roleManager.FindByNameAsync("Administrator");
-            if (asUser)
+            if (createView.AsUser.Value)
             {
                 createView.User = currentUser;
             } else
@@ -110,7 +118,7 @@ namespace BachelorModelViewController.Controllers
         // POST: Channel/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(CreateViewModel model)
+        public async Task<ActionResult> Create(CreateViewModel model)
         {
             try
             {
@@ -148,6 +156,16 @@ namespace BachelorModelViewController.Controllers
                     _context.Add(channel);
                     _context.SaveChanges();
                     return RedirectToAction("Index");
+                }
+                if (!model.AsUser.Value)
+                { 
+                    var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                    var adminRole = await _roleManager.FindByNameAsync("Administrator");
+                    model.AccessibleGroups = _context.Associations.Where(x => x.User == currentUser && x.Role == adminRole).Select(x => x.Group).ToList();
+                    if (model.AccessibleGroups.Count() == 1)
+                    {
+                        model.Group = model.AccessibleGroups.First();
+                    }
                 }
                 return View(model);
 
