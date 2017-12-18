@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using BachelorModelViewController.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using BachelorModelViewController.Models.ViewModels.ChannelViewModels;
+using BachelorModelViewController.Interfaces;
 
 namespace BachelorModelViewController.Controllers
 {
@@ -18,10 +19,12 @@ namespace BachelorModelViewController.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly ApplicationDbContext _context; 
-        
-        public ChannelController(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
+        private readonly IMongoOperations _mongoOperations;
+
+        public ChannelController(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager, IMongoOperations mongoOperations)
         {
             _context = context;
+            _mongoOperations = mongoOperations;
             _roleManager = roleManager;
             _userManager = userManager;
         }
@@ -155,6 +158,7 @@ namespace BachelorModelViewController.Controllers
                     channel.Description = channel.Description;
                     _context.Add(channel);
                     _context.SaveChanges();
+                    await _mongoOperations.CreateCollection(model.Name);
                     return RedirectToAction("Index");
                 }
                 if (!model.AsUser.Value)
@@ -172,7 +176,7 @@ namespace BachelorModelViewController.Controllers
             }
             catch
             {
-                return View();
+                return View(model);
             }
         }
 

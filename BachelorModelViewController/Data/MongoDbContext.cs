@@ -25,6 +25,30 @@ namespace BachelorModelViewController.Data
         {
             return _database.GetCollection<BsonDocument>(name);
         }
+        public bool CreateDatabase(string name)
+        {
+            try
+            {
+                _database.CreateCollection(name);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        public bool DeleteDatabase(string name)
+        {
+            try
+            {
+                _database.DropCollection(name);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
         public async Task<bool> CollectionExists(string collectionName)
         {
