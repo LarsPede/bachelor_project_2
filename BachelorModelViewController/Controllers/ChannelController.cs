@@ -118,7 +118,7 @@ namespace BachelorModelViewController.Controllers
         // POST: Channel/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreateViewModel model)
+        public ActionResult Create(CreateViewModel model)
         {
             try
             {
@@ -159,8 +159,8 @@ namespace BachelorModelViewController.Controllers
                 }
                 if (!model.AsUser.Value)
                 { 
-                    var currentUser = await _userManager.GetUserAsync(HttpContext.User);
-                    var adminRole = await _roleManager.FindByNameAsync("Administrator");
+                    var currentUser = _userManager.GetUserAsync(HttpContext.User).Result;
+                    var adminRole = _roleManager.FindByNameAsync("Administrator").Result;
                     model.AccessibleGroups = _context.Associations.Where(x => x.User == currentUser && x.Role == adminRole).Select(x => x.Group).ToList();
                     if (model.AccessibleGroups.Count() == 1)
                     {
