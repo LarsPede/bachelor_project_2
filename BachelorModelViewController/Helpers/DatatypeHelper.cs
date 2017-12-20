@@ -3,6 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using BachelorModelViewController.Models.ViewModels.DataViewModels;
 
 namespace BachelorModelViewController.Helpers
 {
@@ -209,6 +212,40 @@ namespace BachelorModelViewController.Helpers
                     }
                 }
             }
+            return result;
+        }
+
+        public ChannelContent TakeJson(string s)
+        {
+            var jsonParsedObject = JObject.Parse(s);
+
+            ChannelContent result = new ChannelContent();
+            Type t = null;
+
+            foreach (JProperty prop in jsonParsedObject.Properties())
+            {
+
+                Console.Out.WriteLine("name : " + prop.Name + " - value = " + prop.Value);
+                string typeS= prop.Value.ToString();
+                if (typeS.Contains('['))
+                {
+                    // Array
+                    t = typeof(Array);
+                }
+                else if (typeS.Contains('{'))
+                {
+                    // Class
+                    t = typeof(Object);
+                }
+                else
+                {
+                    // Property
+                    t = parser(typeS);
+                }
+                result.add(new Content(prop.Name, t, true));
+            }
+            
+
             return result;
         }
     }

@@ -158,7 +158,8 @@ namespace BachelorModelViewController.Controllers
                     #region data
 
                     var datahelper = new DatatypeHelper();
-                    var something = datahelper.HandleAsObject(model.JsonContentAsString);
+                    //var something = datahelper.HandleAsObject(model.JsonContentAsString);
+                    var jsonObject = datahelper.TakeJson(model.JsonContentAsString);
 
 
                     #endregion
