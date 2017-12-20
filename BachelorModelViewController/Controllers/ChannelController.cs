@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using BachelorModelViewController.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using BachelorModelViewController.Models.ViewModels.ChannelViewModels;
+using BachelorModelViewController.Interfaces;
 
 namespace BachelorModelViewController.Controllers
 {
@@ -18,10 +19,12 @@ namespace BachelorModelViewController.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly ApplicationDbContext _context; 
-        
-        public ChannelController(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
+        private readonly IMongoOperations _mongoOperations;
+
+        public ChannelController(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager, IMongoOperations mongoOperations)
         {
             _context = context;
+            _mongoOperations = mongoOperations;
             _roleManager = roleManager;
             _userManager = userManager;
         }
@@ -49,6 +52,7 @@ namespace BachelorModelViewController.Controllers
                                                             .Where(x => x.AccessRestriction.GroupRestricted == true && groups.Contains(x.Group))
                                                                     .Select(x => new ChannelViewModel
                                                                     {
+                                                                        Id = x.Id,
                                                                         Name = x.Name,
                                                                         Description = x.Description,
                                                                         User = x.User,
@@ -60,12 +64,13 @@ namespace BachelorModelViewController.Controllers
                                                             .Where(x => x.AccessRestriction.GroupRestricted == false
                                                                     && x.AccessRestriction.UserRestricted == true)
                                                                     .Select(x => new ChannelViewModel
-                                                                        {
-                                                                            Name = x.Name,
-                                                                            Description = x.Description,
-                                                                            User = x.User,
-                                                                            Group = x.Group
-                                                                        }).ToList().AsQueryable();
+                                                                    {
+                                                                        Id = x.Id,
+                                                                        Name = x.Name,
+                                                                        Description = x.Description,
+                                                                        User = x.User,
+                                                                        Group = x.Group
+                                                                    }).ToList().AsQueryable();
 
             }
                 accessibleChannels.UnRestrictedChannels = _context.Channels
@@ -73,6 +78,7 @@ namespace BachelorModelViewController.Controllers
                                                                     && x.AccessRestriction.UserRestricted == false)
                                                                     .Select(x => new ChannelViewModel
                                                                     {
+                                                                        Id = x.Id,
                                                                         Name = x.Name,
                                                                         Description = x.Description,
                                                                         User = x.User,
@@ -149,12 +155,16 @@ namespace BachelorModelViewController.Controllers
                             channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == 1).First();
                             break;
                     }
-                    channel.Group = _context.Groups.Where(x => x.Id == model.GroupId).FirstOrDefault();
+                    if (model.GroupId != null)
+                    {
+                        channel.Group = _context.Groups.Where(x => x.Id == model.GroupId).FirstOrDefault();
+                    }
                     channel.User = _context.Users.Where(x => x.Id == model.UserId).FirstOrDefault();
                     channel.Name = model.Name;
                     channel.Description = channel.Description;
                     _context.Add(channel);
                     _context.SaveChanges();
+                    _mongoOperations.CreateCollection(model.Name);
                     return RedirectToAction("Index");
                 }
                 if (!model.AsUser.Value)
@@ -172,7 +182,7 @@ namespace BachelorModelViewController.Controllers
             }
             catch
             {
-                return View();
+                return View(model);
             }
         }
 
