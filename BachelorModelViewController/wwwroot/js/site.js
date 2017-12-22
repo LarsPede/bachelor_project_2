@@ -184,7 +184,7 @@ class RawInput extends Component {
                 { className: "col-sm-12" },
                 null,
                 [
-                    h("input", { className: "form-control", onInput: e => props.parseType(e.target.value) })
+                    h("input", { value: props.stringType, className: "form-control", onInput: e => props.parseType(e.target.value) })
                 ]
             )
         )
@@ -196,32 +196,161 @@ class App extends Component {
         super(props);
         this.state = {
             showRaw: false,
-            type: { typeName: "Object", value: { "": { typeName: "String", value: null, required: true } } },
-            stringType: ""
+            type: { typeName: "Object", value: { "": { typeName: "String", value: null } } },
+            stringType: "{}"
 
         }
     }
     tryParseString(string) {
         try {
-            var json = JSON.parse(string);
+            let json = JSON.parse(string);
             console.log(JSON.stringify(json));
-            Object.keys(json).forEach(jsonObject => {
-                
+            let concatString = "{ \"typeName\": \"Object\", \"value\": {";
+            var totalLength = Object.keys(json).length;
+            var i = 0;
+            Object.keys(json).forEach(jsonKey => {
+                i++;
+                concatString += this.returnValue(jsonKey, json[jsonKey], false);
+                if (i !== totalLength) {
+                    concatString += ",";
+                }
             });
+            concatString += "}}";
+            return JSON.parse(concatString);
         } catch (err) {
-            console.log(err.message);
+            return this.state.type
         }
     }
-    returnValue(json) {
-
+    returnValue(key, value, array = false) {
+        try {
+            let concatString = '';
+            if (array) {
+                concatString += '{';
+            } else {
+                concatString += ' \"' + key + '\" : {';
+            }
+            if (typeof value === 'object') {
+                if (Array.isArray(value)) {
+                    concatString += "\"typeName\": \"Array\", \"value\": [";
+                    if (value.length > 0) {
+                        value.map((arrayValue, arrayKey) => {
+                            concatString += this.returnValue(arrayKey, arrayValue, true);
+                            if (arrayKey !== value.length - 1) {
+                                concatString += ",";
+                            }
+                        });
+                    } else {
+                        concatString += " { \"typeName\": \"String\", \"value\": null}";
+                    }
+                    concatString += "]";
+                } else {
+                    concatString += " \"typeName\": \"Object\", \"value\" : {";
+                    var totalLength = Object.keys(value).length;
+                    var i = 0;
+                    Object.keys(value).forEach(jsonKey => {
+                        i++;
+                        concatString += this.returnValue(jsonKey, value[jsonKey], false);
+                        if (i !== totalLength) {
+                            concatString += ",";
+                        }
+                    });
+                    concatString += "}";
+                }
+            } else if (typeof (value) === "boolean") {
+                concatString += " \"typeName\": \"Boolean\", \"value\": null";
+            } else if ($.isNumeric(value)) {
+                concatString += " \"typeName\": \"Number\", \"value\": null";
+            } else if (value === "timestamp()") {
+                concatString += " \"typeName\": \"Unix Timestamp\", \"value\": null";
+            } else {
+                concatString += " \"typeName\": \"String\", \"value\": null";
+            }
+            concatString += "}";
+            return concatString;
+            
+        } catch (err) {
+            
+        }
     }
 
-    tryParseObject(object) {
+    tryParseObject(json, array = false) {
         try {
+            if (array) {
+                let concatString = "[";
+                json.value.forEach((arrayValue, arrayKey) => {
+                    switch (arrayValue.typeName) {
+                        case "Number": {
+                            concatString += "0";
+                        }
+                        case "String": {
+                            concatString += "\"\"";
+                        }
+                        case "Boolean": {
+                            concatString += "true";
+                        }
+                        case "Unix Timestamp": {
+                            concatString += "\"timestamp()\"";
+                        }
+                        case "Object": {
+                            concatString += this.tryParseObject(arrayValue);
+                        }
+                        case "Array": {
+                            concatString += this.tryParseObject(arrayValue, true);
+                        }
+                    }
+                    if (arrayKey !== json.value.length) {
+                        concatString += ",";
+                    }
+                });
+                concatString += "]"
+                return concatString;
+            } else {
+                let concatString = "{";
+                var totalLength = Object.keys(json.value).length;
+                var i = 0;
+                Object.keys(json.value).forEach(jsonKey => {
+                    i++;
+                    switch (json.value[jsonKey].typeName) {
+                        case "Number": {
+                            concatString += "\"" + jsonKey + "\": 0";
+                            break;
+                        }
+                        case "String": {
+                            concatString += "\"" + jsonKey + "\": \"\"";
+                            break;
+                        }
+                        case "Boolean": {
+                            concatString += "\"" + jsonKey + "\": true";
+                            break;
+                        }
+                        case "Unix Timestamp": {
+                            concatString += "\"" + jsonKey + "\": \"timestamp()\"";
+                            break;
+                        }
+                        case "Object": {
+                            concatString += "\"" + jsonKey + "\":" + this.tryParseObject(json.value[jsonKey]);
+                            break;
+                        }
+                        case "Array": {
+                            concatString += "\"" + jsonKey + "\":" + this.tryParseObject(json.value[jsonKey], true);
+                            break;
+                        }
+                    }
+                    if (i !== totalLength) {
+                        concatString += ",";
+                    }
+                });
+                concatString += "}"
+                return concatString;
+            }
             
         } catch (err) {
             console.log(err);
         }
+    }
+
+    returnAsString(json) {
+
     }
 
     render(props, state) {
@@ -239,9 +368,19 @@ class App extends Component {
                 state.showRaw ? "Describe Format." : "Let us parse a JSON Object for you."
             ),
             state.showRaw ?
-                h(RawInput, { type: state.type, parseType: string => this.tryParseString(string)})
+                h(RawInput, {
+                    stringType: state.stringType, type: state.type, parseType: string => {
+                        this.setState({ stringType: string });
+                        this.setState({ type: this.tryParseString(string) });
+                    }
+                })
                 :
-                h(ObjectInput, { type: state.type, first: true, onType: type => { console.log(type); this.setState({ type }) } })
+                h(ObjectInput, {
+                    type: state.type, first: true, onType: type => {
+                        this.setState({ stringType: this.tryParseObject(type) });
+                        this.setState({ type });
+                    }
+                })
         ]
         )
     }
