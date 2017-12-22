@@ -69,15 +69,19 @@ function ObjectInput({ type, first, onType }) {
 function ArrayInput({ type, onType }) {
     return h(
         "div",
-        { className: "col-sm-12", style: { marginLeft: "50px"} },
+        { className: "col-sm-12", style: { marginLeft: "290px"} },
         type.value.map((t, key) => {
             return h(JsonDefinition, {
-                canDelete: key !== 0,
+                canDelete: key !== 0 && key === type.value.length-1,
                 key,
                 keyName: null,
                 type: t,
                 onType: subType => {
                     type.value[key] = subType;
+                    onType(type);
+                },
+                onDelete: () => {
+                    type.value.pop();
                     onType(type);
                 }
             })
@@ -204,7 +208,6 @@ class App extends Component {
     tryParseString(string) {
         try {
             let json = JSON.parse(string);
-            console.log(JSON.stringify(json));
             let concatString = "{ \"typeName\": \"Object\", \"value\": {";
             var totalLength = Object.keys(json).length;
             var i = 0;
@@ -275,86 +278,95 @@ class App extends Component {
 
     tryParseObject(json, array = false) {
         try {
-            if (array) {
-                let concatString = "[";
-                json.value.forEach((arrayValue, arrayKey) => {
-                    switch (arrayValue.typeName) {
-                        case "Number": {
-                            concatString += "0";
-                        }
-                        case "String": {
-                            concatString += "\"\"";
-                        }
-                        case "Boolean": {
-                            concatString += "true";
-                        }
-                        case "Unix Timestamp": {
-                            concatString += "\"timestamp()\"";
-                        }
-                        case "Object": {
-                            concatString += this.tryParseObject(arrayValue);
-                        }
-                        case "Array": {
-                            concatString += this.tryParseObject(arrayValue, true);
-                        }
+            if (json.value !== null) {
+                if (array) {
+                    let concatString = "[";
+                    if (json.value.length > 0) {
+                        json.value.forEach((arrayValue, arrayKey) => {
+                            switch (arrayValue.typeName) {
+                                case "Number": {
+                                    concatString += "0";
+                                    break;
+                                }
+                                case "String": {
+                                    concatString += "\"\"";
+                                    break;
+                                }
+                                case "Boolean": {
+                                    concatString += "true";
+                                    break;
+                                }
+                                case "Unix Timestamp": {
+                                    concatString += "\"timestamp()\"";
+                                    break;
+                                }
+                                case "Object": {
+                                    concatString += this.tryParseObject(arrayValue);
+                                    break;
+                                }
+                                case "Array": {
+                                    concatString += this.tryParseObject(arrayValue, true);
+                                    break;
+                                }
+                            }
+                            if (arrayKey !== json.value.length-1) {
+                                concatString += ",";
+                            }
+                        });
+                    } else {
+                        concatString += "\"\"";
                     }
-                    if (arrayKey !== json.value.length) {
-                        concatString += ",";
-                    }
-                });
-                concatString += "]"
-                return concatString;
+                    concatString += "]"
+                    return concatString;
+                } else {
+                    let concatString = "{";
+                    var totalLength = Object.keys(json.value).length;
+                    var i = 0;
+                    Object.keys(json.value).forEach(jsonKey => {
+                        i++;
+                        switch (json.value[jsonKey].typeName) {
+                            case "Number": {
+                                concatString += "\"" + jsonKey + "\": 0";
+                                break;
+                            }
+                            case "String": {
+                                concatString += "\"" + jsonKey + "\": \"\"";
+                                break;
+                            }
+                            case "Boolean": {
+                                concatString += "\"" + jsonKey + "\": true";
+                                break;
+                            }
+                            case "Unix Timestamp": {
+                                concatString += "\"" + jsonKey + "\": \"timestamp()\"";
+                                break;
+                            }
+                            case "Object": {
+                                concatString += "\"" + jsonKey + "\":" + this.tryParseObject(json.value[jsonKey]);
+                                break;
+                            }
+                            case "Array": {
+                                concatString += "\"" + jsonKey + "\":" + this.tryParseObject(json.value[jsonKey], true);
+                                break;
+                            }
+                        }
+                        if (i !== totalLength) {
+                            concatString += ",";
+                        }
+                    });
+                    concatString += "}"
+                    return concatString;
+                }
             } else {
-                let concatString = "{";
-                var totalLength = Object.keys(json.value).length;
-                var i = 0;
-                Object.keys(json.value).forEach(jsonKey => {
-                    i++;
-                    switch (json.value[jsonKey].typeName) {
-                        case "Number": {
-                            concatString += "\"" + jsonKey + "\": 0";
-                            break;
-                        }
-                        case "String": {
-                            concatString += "\"" + jsonKey + "\": \"\"";
-                            break;
-                        }
-                        case "Boolean": {
-                            concatString += "\"" + jsonKey + "\": true";
-                            break;
-                        }
-                        case "Unix Timestamp": {
-                            concatString += "\"" + jsonKey + "\": \"timestamp()\"";
-                            break;
-                        }
-                        case "Object": {
-                            concatString += "\"" + jsonKey + "\":" + this.tryParseObject(json.value[jsonKey]);
-                            break;
-                        }
-                        case "Array": {
-                            concatString += "\"" + jsonKey + "\":" + this.tryParseObject(json.value[jsonKey], true);
-                            break;
-                        }
-                    }
-                    if (i !== totalLength) {
-                        concatString += ",";
-                    }
-                });
-                concatString += "}"
-                return concatString;
+                return "{}";
             }
-            
         } catch (err) {
-            console.log(err);
         }
-    }
-
-    returnAsString(json) {
-
     }
 
     render(props, state) {
         return h("div", {}, [
+            h("input", {type: "hidden", id: "JsonContentAsString", name: "JsonContentAsString", value: state.stringType }),
             h("button",
                 {
                     type: "button",
