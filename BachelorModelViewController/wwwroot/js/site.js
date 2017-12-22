@@ -24,10 +24,10 @@ class Counter extends Component {
     }
 }
 
-function ObjectInput({ type, onType }) {
+function ObjectInput({ type, first, onType }) {
     return h(
         "div",
-        { className: "col-sm-12" },
+        { className: "col-sm-12", style: first ? {paddingLeft: "0"} : { marginLeft: "50px" } },
         Object.keys(type.value).map((key, i, allKeys) => {
             return h(JsonDefinition, {
                 keyName: key,
@@ -69,9 +69,10 @@ function ObjectInput({ type, onType }) {
 function ArrayInput({ type, onType }) {
     return h(
         "div",
-        { className: "col-sm-12" },
+        { className: "col-sm-12", style: { marginLeft: "50px"} },
         type.value.map((t, key) => {
             return h(JsonDefinition, {
+                canDelete: key !== 0,
                 key,
                 keyName: null,
                 type: t,
@@ -86,7 +87,7 @@ function ArrayInput({ type, onType }) {
                 {
                     className: "btn btn-success",
                     onClick: () => {
-                        type.value[""] = { typeName: "String", value: null }
+                        type.value.push({ typeName: "String", value: null })
                         onType(type)
                     },
                     style: { "margin-top": "10px" }
@@ -104,10 +105,10 @@ class JsonDefinition extends Component {
     renderSubField(type, onType) {
         switch (type.typeName) {
             case "Object": {
-                return h(ObjectInput, { type, onType, style: { "margin-left": "50px" } })
+                return h(ObjectInput, { type, first: false, onType })
             }
             case "Array": {
-                return h(ArrayInput, { type, onType, style: { "margin-left": "50px"} })
+                return h(ArrayInput, { type, onType })
             }
         }
     }
@@ -161,6 +162,10 @@ class JsonDefinition extends Component {
                         )
                     )
                     :
+                    h(),
+                this.props.notObjectOrArray ?
+                    h("input",{type:"checkbox", className: "pull-right"})
+                    :
                     h()
             ]
         )
@@ -169,7 +174,7 @@ class JsonDefinition extends Component {
 JsonDefinition.defaultProps = { canDelete: true, addBelow: false };
 
 class RawInput extends Component {
-    render(props) {
+    render(props, state) {
         return h(
             "div",
             { className: "row" },
@@ -179,7 +184,7 @@ class RawInput extends Component {
                 { className: "col-sm-12" },
                 null,
                 [
-                    h("input", { className: "form-control" })
+                    h("input", { className: "form-control", onInput: e => props.parseType(e.target.value) })
                 ]
             )
         )
@@ -191,9 +196,34 @@ class App extends Component {
         super(props);
         this.state = {
             showRaw: false,
-            type: { typeName: "Object", value: { "": { typeName: "String", value: null }} }
+            type: { typeName: "Object", value: { "": { typeName: "String", value: null, required: true } } },
+            stringType: ""
+
         }
     }
+    tryParseString(string) {
+        try {
+            var json = JSON.parse(string);
+            console.log(JSON.stringify(json));
+            Object.keys(json).forEach(jsonObject => {
+                
+            });
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+    returnValue(json) {
+
+    }
+
+    tryParseObject(object) {
+        try {
+            
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     render(props, state) {
         return h("div", {}, [
             h("button",
@@ -209,9 +239,9 @@ class App extends Component {
                 state.showRaw ? "Describe Format." : "Let us parse a JSON Object for you."
             ),
             state.showRaw ?
-                h(RawInput, {})
-                : 
-                h(ObjectInput, { type: state.type, onType: type => { console.log(type); this.setState({ type }) } })
+                h(RawInput, { type: state.type, parseType: string => this.tryParseString(string)})
+                :
+                h(ObjectInput, { type: state.type, first: true, onType: type => { console.log(type); this.setState({ type }) } })
         ]
         )
     }
