@@ -43,7 +43,7 @@ namespace BachelorModelViewController.Controllers
     //from prod2 in prodGroup
     //where prod2.UnitPrice > 2.50M
     //select prod2;
-            )
+            
                                 
                                      
 
