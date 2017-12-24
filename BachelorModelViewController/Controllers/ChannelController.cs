@@ -49,6 +49,7 @@ namespace BachelorModelViewController.Controllers
                                                             .Where(x => x.AccessRestriction.GroupRestricted == true && groups.Contains(x.Group))
                                                                     .Select(x => new ChannelViewModel
                                                                     {
+                                                                        Id = x.Id,
                                                                         Name = x.Name,
                                                                         Description = x.Description,
                                                                         User = x.User,
@@ -61,6 +62,7 @@ namespace BachelorModelViewController.Controllers
                                                                     && x.AccessRestriction.UserRestricted == true)
                                                                     .Select(x => new ChannelViewModel
                                                                         {
+                                                                            Id = x.Id,
                                                                             Name = x.Name,
                                                                             Description = x.Description,
                                                                             User = x.User,
@@ -73,6 +75,7 @@ namespace BachelorModelViewController.Controllers
                                                                     && x.AccessRestriction.UserRestricted == false)
                                                                     .Select(x => new ChannelViewModel
                                                                     {
+                                                                        Id = x.Id,
                                                                         Name = x.Name,
                                                                         Description = x.Description,
                                                                         User = x.User,
@@ -87,20 +90,37 @@ namespace BachelorModelViewController.Controllers
             var currentUser = await _userManager.GetUserAsync(HttpContext.User);
             var details = new DetailsViewModel();
             details.EditAccess = false;
-            details.Channel = _context.Channels.Where(x => x.Id == id).FirstOrDefault();
-            if (details.Channel.UserId != null && details.Channel.UserId == currentUser.Id)
+            details.PushAccess = false;
+            Channel tempChannel = _context.Channels.Where(x => x.Id == id).FirstOrDefault();
+            tempChannel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == tempChannel.AccessRestrictionId).FirstOrDefault();
+            tempChannel.Group = _context.Groups.Where(x => x.Id == tempChannel.GroupId).FirstOrDefault();
+            tempChannel.User = _context.Users.Where(x => x.Id == tempChannel.UserId).FirstOrDefault();
+            details.Channel = tempChannel;
+            if( currentUser != null)
             {
-                details.EditAccess = true;
-            } else
-            {
-                var adminRole = await _roleManager.FindByNameAsync("Administrator");
-                if (_context.Associations.Where(x => x.UserId == currentUser.Id && x.RoleId == adminRole.Id).Any())
+                details.CurrentUser = currentUser;
+                if (details.Channel.UserId != null && details.Channel.UserId == currentUser.Id)
                 {
                     details.EditAccess = true;
+                    details.PushAccess = true;
                 }
-
+                else
+                {
+                    var adminRole = await _roleManager.FindByNameAsync("Administrator");
+                    var supplierRole = await _roleManager.FindByNameAsync("Supplier");
+                    if (_context.Associations.Where(x => x.UserId == currentUser.Id && x.RoleId == adminRole.Id).Any())
+                    {
+                        details.EditAccess = true;
+                        details.PushAccess = true;
+                    }
+                    else if (_context.Associations.Where(x => x.UserId == currentUser.Id && x.RoleId == supplierRole.Id).Any())
+                    {
+                        details.PushAccess = true;
+                    }
+                }
             }
-            return View();
+            details.BaseUrl = HttpContext.Request.Host.Host + ":" + HttpContext.Request.Host.Port;
+            return View(details);
         }
 
         // GET: Channel/Create
@@ -120,12 +140,14 @@ namespace BachelorModelViewController.Controllers
             if (createView.AsUser.Value)
             {
                 createView.User = currentUser;
+                createView.UserId = createView.User.Id;
             } else
             {
                 createView.AccessibleGroups = _context.Associations.Where(x => x.User == currentUser && x.Role == adminRole).Select(x => x.Group).ToList();
                 if (createView.AccessibleGroups.Count() == 1)
                 {
                     createView.Group = createView.AccessibleGroups.First();
+                    createView.GroupId = createView.Group.Id;
                 }
             }
             return View(createView);

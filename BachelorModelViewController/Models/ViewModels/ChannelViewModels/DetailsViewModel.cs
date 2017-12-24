@@ -11,5 +11,8 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
     {
         public ChannelViewModel Channel { get; set; }
         public bool EditAccess { get; set; }
+        public bool PushAccess { get; set; }
+        public string BaseUrl { get; set; }
+        public User CurrentUser { get; set; }
     }
 }

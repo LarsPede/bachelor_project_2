@@ -25,20 +25,76 @@
                 <p>Below is general information regarding the channel</p>
             </div>
         </div>
-        <dl class="dl-horizontal">
-            <dt>
-                @Html.DisplayNameFor(model => model.Channel.Name)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.Channel.Name)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.Channel.Description)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.Channel.Description)
-            </dd>
-        </dl>
+        <div class="row">
+            <div class="col-sm-12">
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Channel.Name)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Channel.Name)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Channel.Description)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Channel.Description)
+                    </dd>
+                    @if (Model.PushAccess)
+                    {
+
+                        <dt>
+                            Datatype
+                        </dt>
+                        <dd>
+                            The following datatype is used for both POST- and GET-calls:
+                        </dd>
+                        <dd>
+                            Insert Datatype.
+                        </dd>
+                        <dd>
+                            The following values are required for POST-calls:
+                        </dd>
+                        <dd>
+                            Insert Required Fields.
+                        </dd>
+                        <dt>
+                            EntryPoints
+                        </dt>
+                        <dd>
+                            The following REST calls are POST-calls:
+                        </dd>
+                        <dd>
+                            localhost:8000/api/post_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)
+                        </dd>
+                        <dd>                            
+                            localhost:8000/api/post_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)
+                        </dd>
+
+                    }
+                    else
+                    {
+
+                        <dt>
+                            Datatype
+                        </dt>
+                        <dd>
+                            The GET-calls will return the following datatype:
+                        </dd>
+                        <dd>
+                            Insert Datatype.
+                        </dd>
+
+                    }
+                    <dt>
+                        EndPoints
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Channel.Description)
+                    </dd>
+                </dl>
+            </div>
+        </div>
         <div class="row">
             <div class="col-sm-12">
 
