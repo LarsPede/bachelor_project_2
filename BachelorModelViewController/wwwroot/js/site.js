@@ -33,6 +33,7 @@ function ObjectInput({ type, first, onType }) {
                 keyName: key,
                 type: type.value[key],
                 canDelete: i !== 0,
+                first: first,
                 onType: subType => {
                     type.value[key] = subType;
                     onType(type);
@@ -46,6 +47,10 @@ function ObjectInput({ type, first, onType }) {
                     delete type.value[key];
                     onType(type);
                 },
+                changeRequired: () => {
+                    type.value[key].requiredKey = !type.value[key].requiredKey
+                    onType(type);
+                }
             })
         }).concat(
             h(
@@ -53,7 +58,7 @@ function ObjectInput({ type, first, onType }) {
                 {
                     className: "btn btn-success",
                     onClick: () => {
-                        type.value[""] = { typeName: "String", value: null }
+                        type.value[""] = { typeName: "String", value: null, requiredKey: false }
                         onType(type)
                     },
                     style: { "margin-top": "10px" }
@@ -91,7 +96,7 @@ function ArrayInput({ type, onType }) {
                 {
                     className: "btn btn-success",
                     onClick: () => {
-                        type.value.push({ typeName: "String", value: null })
+                        type.value.push({ typeName: "String", value: null, requiredKey: false })
                         onType(type)
                     },
                     style: { "margin-top": "10px" }
@@ -151,7 +156,14 @@ class JsonDefinition extends Component {
                         })
                     )
                 ),
-                h("span", null, state.type),
+                this.props.first ?
+                    h("input", {
+                        type: "checkbox", onClick: () => {
+                            props.changeRequired();
+                        }, checked: this.props.type.requiredKey, className: "pull-right"
+                    })
+                    :
+                    h(),
                 this.renderSubField(props.type, props.onType),
                 this.props.canDelete ?
                     h(
@@ -165,10 +177,6 @@ class JsonDefinition extends Component {
                             { className: "glyphicon glyphicon-minus" }
                         )
                     )
-                    :
-                    h(),
-                this.props.notObjectOrArray ?
-                    h("input",{type:"checkbox", className: "pull-right"})
                     :
                     h()
             ]
@@ -200,8 +208,8 @@ class App extends Component {
         super(props);
         this.state = {
             showRaw: false,
-            type: { typeName: "Object", value: { "": { typeName: "String", value: null } } },
-            stringType: "{}"
+            type: { typeName: "Object", value: { "id": { typeName: "String", value: null, requiredKey: true }} },
+            stringType: "{ \"id\" : \"\" }"
 
         }
     }
@@ -273,6 +281,30 @@ class App extends Component {
             
         } catch (err) {
             
+        }
+    }
+
+    tryParseReqiuredKeys(json) {
+        try {
+            let concatString = "{ \"required\": [";
+            let requiredArray = [];
+            if (json.value !== null) { 
+                Object.keys(json.value).forEach(jsonKey => {
+                    if (json.value[jsonKey].requiredKey === true) {
+                        requiredArray.push(jsonKey);
+                    }
+                });
+                requiredArray.forEach((arrayValue, arrayKey) => {
+                    concatString += arrayValue;
+                    if (arrayKey !== requiredArray.length - 1) {
+                        concatString += ",";
+                    }
+                });
+                concatString += "]}";
+            }
+            return concatString;
+        } catch (err) {
+            return this.state.type
         }
     }
 
@@ -366,7 +398,8 @@ class App extends Component {
 
     render(props, state) {
         return h("div", {}, [
-            h("input", {type: "hidden", id: "JsonContentAsString", name: "JsonContentAsString", value: state.stringType }),
+            h("input", { type: "hidden", id: "JsonContentAsString", name: "JsonContentAsString", value: state.stringType }),
+            h("input", { type: "hidden", id: "JsonRequiredKeys", name: "JsonRequiredKeys", value: state.requiredKeys }),
             h("button",
                 {
                     type: "button",
@@ -379,17 +412,25 @@ class App extends Component {
                 },
                 state.showRaw ? "Describe Format." : "Let us parse a JSON Object for you."
             ),
+            h("span",
+                {
+                    className: "lead pull-right" 
+                },
+                "Required?"
+            ),
             state.showRaw ?
                 h(RawInput, {
                     stringType: state.stringType, type: state.type, parseType: string => {
                         this.setState({ stringType: string });
                         this.setState({ type: this.tryParseString(string) });
+                        this.setState({ requiredKeys: "{\"keys\" : []}" });
                     }
                 })
                 :
                 h(ObjectInput, {
                     type: state.type, first: true, onType: type => {
                         this.setState({ stringType: this.tryParseObject(type) });
+                        this.setState({ requiredKeys: this.tryParseReqiuredKeys(type) });
                         this.setState({ type });
                     }
                 })
