@@ -11,30 +11,55 @@
     <h2>Details</h2>
 
     <div>
-        <h4>DetailsViewModel</h4>
+        @if (Model.Channel.UserId != null)
+        {
+            <h4>@Html.DisplayFor(model => model.Channel.Name) is a channel owned by the user: @Html.DisplayFor(model => model.Channel.User.FirstName) </h4>
+        }
+        else
+        {
+            <h4>@Html.DisplayFor(model => model.Channel.Name) is a channel owned by the group: @Html.DisplayFor(model => model.Channel.Group.Name) </h4>
+        }
         <hr />
+        <div class="row">
+            <div class="col-sm-12">
+                <p>Below is general information regarding the channel</p>
+            </div>
+        </div>
         <dl class="dl-horizontal">
             <dt>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.Channel.Name)
             </dt>
             <dd>
-                @Html.DisplayFor(model => model.Name)
+                @Html.DisplayFor(model => model.Channel.Name)
             </dd>
             <dt>
-                @Html.DisplayNameFor(model => model.Description)
+                @Html.DisplayNameFor(model => model.Channel.Description)
             </dt>
             <dd>
-                @Html.DisplayFor(model => model.Description)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.EditAccess)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.EditAccess)
+                @Html.DisplayFor(model => model.Channel.Description)
             </dd>
         </dl>
+        <div class="row">
+            <div class="col-sm-12">
+
+                @if (Model.Channel.DaysRestriction == 0)
+                {
+                    <p>We will keep all of this channels data until an administrator of the channel deletes the data.</p>
+                }
+                else
+                {
+                    <p>
+                        The creator of this channel has deemed the data irrelevant after @Html.DisplayFor(model => model.Channel.DaysRestriction).<br />
+                        The data will therefore be deleted around this time.
+                    </p>
+                }
+            </div>
+        </div>
     </div>
     <div>
-        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+        @if (Model.EditAccess)
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Channel.Id">Edit</a>
+        }
         <a asp-action="Index">Back to List</a>
     </div>

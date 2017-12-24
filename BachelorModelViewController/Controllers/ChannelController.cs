@@ -94,6 +94,10 @@ namespace BachelorModelViewController.Controllers
             } else
             {
                 var adminRole = await _roleManager.FindByNameAsync("Administrator");
+                if (_context.Associations.Where(x => x.UserId == currentUser.Id && x.RoleId == adminRole.Id).Any())
+                {
+                    details.EditAccess = true;
+                }
 
             }
             return View();
@@ -164,7 +168,8 @@ namespace BachelorModelViewController.Controllers
                     channel.Group = _context.Groups.Where(x => x.Id == model.GroupId).FirstOrDefault();
                     channel.User = _context.Users.Where(x => x.Id == model.UserId).FirstOrDefault();
                     channel.Name = model.Name;
-                    channel.Description = channel.Description;
+                    channel.Description = model.Description;
+                    channel.DaysRestriction = model.DaysRestriction;
                     _context.Add(channel);
                     _context.SaveChanges();
                     return RedirectToAction("Index");

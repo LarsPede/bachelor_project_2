@@ -20,10 +20,12 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
         public int? GroupId { get; set; }
         [ForeignKey("GroupId")]
         public Group Group { get; set; }
+        public int DaysRestriction { get; set; }
         public IEnumerable<Group> AccessibleGroups { get; set; }
         public int AccessRestriction { get; set; }
         public IdentityRole DemandedRole { get; set; }
         public string JsonContentAsString { get; set; }
+        public string JsonRequiredKeys { get; set; }
         public bool? AsUser { get; set; }
     }
 }

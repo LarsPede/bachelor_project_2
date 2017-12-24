@@ -21,6 +21,7 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
         public int? GroupId { get; set; }
         [ForeignKey("GroupId")]
         public Group Group { get; set; }
+        public int DaysRestriction { get; set; }
         public int AccessRestrictionId { get; set; }
         [ForeignKey("AccessRestrictionId")]
         public AccessRestrictionViewModel AccessRestriction { get; set; }
@@ -36,6 +37,7 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
                 User = channel.User,
                 GroupId = channel.GroupId,
                 Group = channel.Group,
+                DaysRestriction = channel.DaysRestriction,
                 AccessRestrictionId = channel.AccessRestrictionId,
                 AccessRestriction = channel.AccessRestriction
             };
@@ -52,6 +54,7 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
                 User = vm.User,
                 GroupId = vm.GroupId,
                 Group = vm.Group,
+                DaysRestriction = vm.DaysRestriction,
                 AccessRestrictionId = vm.AccessRestrictionId,
                 AccessRestriction = vm.AccessRestriction
             };
