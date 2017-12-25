@@ -31,7 +31,7 @@ namespace BachelorModelViewController.Data
                 {
                     throw new MongoException("This channel already exists. You have to change the channel-name.");
                 }
-                _context.CreateDatabase(collectionName);
+                _context.CreateCollection(collectionName);
                 return new Task<bool>(() => true);
             }
             catch (Exception e)
