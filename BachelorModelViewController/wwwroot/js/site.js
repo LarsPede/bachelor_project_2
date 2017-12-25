@@ -209,7 +209,9 @@ class App extends Component {
         this.state = {
             showRaw: false,
             type: { typeName: "Object", value: { "id": { typeName: "String", value: null, requiredKey: true }} },
-            stringType: "{ \"id\" : \"\" }"
+            stringType: "{ \"id\" : \"\" }",
+            requiredKeys: "{ \"requiredKeys\" : [ \"id\" ] }",
+            sendType: "{ \"typeName\": \"Object\", \"value\": { \"id\": { \"typeName\": \"String\", \"value\": null, \"requiredKey\": true }} }"
 
         }
     }
@@ -227,7 +229,9 @@ class App extends Component {
                 }
             });
             concatString += "}}";
-            return JSON.parse(concatString);
+            var temp = JSON.parse(concatString);
+            this.setState({ sendType: JSON.stringify(temp) });
+            return temp;
         } catch (err) {
             return this.state.type
         }
@@ -251,7 +255,7 @@ class App extends Component {
                             }
                         });
                     } else {
-                        concatString += " { \"typeName\": \"String\", \"value\": null}";
+                        concatString += " { \"typeName\": \"String\", \"value\": null, \"requiredKey\" : false}";
                     }
                     concatString += "]";
                 } else {
@@ -265,16 +269,16 @@ class App extends Component {
                             concatString += ",";
                         }
                     });
-                    concatString += "}";
+                    concatString += "}, \"requiredKey\" : false";
                 }
             } else if (typeof (value) === "boolean") {
-                concatString += " \"typeName\": \"Boolean\", \"value\": null";
+                concatString += " \"typeName\": \"Boolean\", \"value\": null, \"requiredKey\" : false";
             } else if ($.isNumeric(value)) {
-                concatString += " \"typeName\": \"Number\", \"value\": null";
+                concatString += " \"typeName\": \"Number\", \"value\": null, \"requiredKey\" : false";
             } else if (value === "timestamp()") {
-                concatString += " \"typeName\": \"Unix Timestamp\", \"value\": null";
+                concatString += " \"typeName\": \"Unix Timestamp\", \"value\": null, \"requiredKey\" : false";
             } else {
-                concatString += " \"typeName\": \"String\", \"value\": null";
+                concatString += " \"typeName\": \"String\", \"value\": null, \"requiredKey\" : false";
             }
             concatString += "}";
             return concatString;
@@ -398,7 +402,7 @@ class App extends Component {
 
     render(props, state) {
         return h("div", {}, [
-            h("input", { type: "hidden", id: "JsonContentAsString", name: "JsonContentAsString", value: state.stringType }),
+            h("input", { type: "hidden", id: "JsonContentAsString", name: "JsonContentAsString", value: state.sendType }),
             h("input", { type: "hidden", id: "JsonRequiredKeys", name: "JsonRequiredKeys", value: state.requiredKeys }),
             h("button",
                 {
@@ -412,12 +416,15 @@ class App extends Component {
                 },
                 state.showRaw ? "Describe Format." : "Let us parse a JSON Object for you."
             ),
-            h("span",
-                {
-                    className: "lead pull-right" 
-                },
-                "Required?"
-            ),
+            state.showRaw ?
+                h()
+                :
+                h("span",
+                    {
+                        className: "lead pull-right"
+                    },
+                    "Required?"
+                ),
             state.showRaw ?
                 h(RawInput, {
                     stringType: state.stringType, type: state.type, parseType: string => {
@@ -430,6 +437,7 @@ class App extends Component {
                 h(ObjectInput, {
                     type: state.type, first: true, onType: type => {
                         this.setState({ stringType: this.tryParseObject(type) });
+                        this.setState({ sendType: JSON.stringify(type) });
                         this.setState({ requiredKeys: this.tryParseReqiuredKeys(type) });
                         this.setState({ type });
                     }

@@ -47,13 +47,13 @@
                             Datatype
                         </dt>
                         <dd>
-                            The following datatype is used for both POST- and GET-calls:
+                            <i><u>The following datatype is used for both POST- and GET-calls:</u></i>
                         </dd>
                         <dd>
                             Insert Datatype.
                         </dd>
                         <dd>
-                            The following values are required for POST-calls:
+                            <i><u>The following values are required for POST-calls:</u></i>
                         </dd>
                         <dd>
                             Insert Required Fields.
@@ -62,13 +62,13 @@
                             EntryPoints
                         </dt>
                         <dd>
-                            The following REST calls are POST-calls:
+                            <i><u>The following REST calls are POST-calls:</u></i>
                         </dd>
                         <dd>
-                            localhost:8000/api/post_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)
+                            @Html.DisplayFor(model => model.BaseUrl)/api/post_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)
                         </dd>
                         <dd>                            
-                            localhost:8000/api/post_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)
+                            @Html.DisplayFor(model => model.BaseUrl)/api/post_many_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)
                         </dd>
 
                     }
@@ -79,7 +79,7 @@
                             Datatype
                         </dt>
                         <dd>
-                            The GET-calls will return the following datatype:
+                            <i><u>The GET-calls will return the following datatype:</u></i>
                         </dd>
                         <dd>
                             Insert Datatype.
@@ -90,8 +90,54 @@
                         EndPoints
                     </dt>
                     <dd>
-                        @Html.DisplayFor(model => model.Channel.Description)
+                        <i><u>The following REST calls are GET-calls:</u></i>
                     </dd>
+                    @if (Model.CurrentUser != null)
+                    {
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_all_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)
+                        </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_all_channel_data_from/@Html.DisplayFor(model => model.Channel.Name)/[unix-timestamp-in-seconds]/@Html.DisplayFor(model => model.CurrentUser.Token)
+                        </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)?querystring
+                        </dd>
+                        <dd style="border: white solid 1px; border-radius: 5px; background-color: black; color: white">
+                            <div>example:</div>
+                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB="here"</div>
+                        </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)?querystring
+                        </dd>
+                        <dd style="border: white solid 1px; border-radius: 5px; background-color: black; color: white">
+                            <div>example:</div>
+                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB="here"</div>
+                        </dd>
+                    }
+                    else
+                    {
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_all_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free
+                        </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_all_channel_data_from/@Html.DisplayFor(model => model.Channel.Name)/[unix-timestamp-in-seconds]/free
+                        </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?querystring
+                        </dd>
+                        <dd style="border: white solid 1px; border-radius: 5px; background-color: black; color: white">
+                            <div>example:</div>
+                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB="here"</div>
+                        </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?querystring
+                        </dd>
+                        <dd style="border: white solid 1px; border-radius: 5px; background-color: black; color: white">
+                            <div>example:</div>
+                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB="here"</div>
+                        </dd>
+                    }
                 </dl>
             </div>
         </div>
