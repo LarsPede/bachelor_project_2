@@ -222,46 +222,94 @@ namespace BachelorModelViewController.Controllers
         // GET: Channel/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var channel = _context.Channels.Where(x => x.Id == id).FirstOrDefault();
+            channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == channel.AccessRestrictionId).FirstOrDefault();
+            channel.Group = _context.Groups.Where(x => x.Id == channel.GroupId).FirstOrDefault();
+            channel.User = _context.Users.Where(x => x.Id == channel.UserId).FirstOrDefault();
+            ChannelViewModel viewChannel = channel;
+            return View(viewChannel);
         }
 
         // POST: Channel/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, ChannelViewModel model)
         {
             try
             {
-                // TODO: Add update logic here
-
+                var channel = _context.Channels.Where(x => x.Id == id).FirstOrDefault();
+                channel.Description = model.Description;
+                channel.DaysRestriction = model.DaysRestriction;
+                _context.SaveChanges();
                 return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                var channel = _context.Channels.Where(x => x.Id == id).FirstOrDefault();
+                channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == channel.AccessRestrictionId).FirstOrDefault();
+                channel.Group = _context.Groups.Where(x => x.Id == channel.GroupId).FirstOrDefault();
+                channel.User = _context.Users.Where(x => x.Id == channel.UserId).FirstOrDefault();
+                ChannelViewModel viewChannel = channel;
+                return View(viewChannel);
             }
         }
 
         // GET: Channel/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var channel = _context.Channels.Where(x => x.Id == id).FirstOrDefault();
+            channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == channel.AccessRestrictionId).FirstOrDefault();
+            channel.Group = _context.Groups.Where(x => x.Id == channel.GroupId).FirstOrDefault();
+            channel.User = _context.Users.Where(x => x.Id == channel.UserId).FirstOrDefault();
+            ChannelViewModel viewChannel = channel;
+            return View(viewChannel);
         }
 
         // POST: Channel/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, IFormCollection collection)
         {
             try
             {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                var adminRole = await _roleManager.FindByNameAsync("Administrator");
+                var channel = _context.Channels.Where(x => x.Id == id).FirstOrDefault();
+                if (channel.UserId != null)
+                {
+                    if (channel.UserId == currentUser.Id)
+                    {
+                        _context.Remove(channel);
+                        _context.SaveChanges();
+                        _mongoOperations.DeleteCollection(channel.Name);
+                        return RedirectToAction("Index");
+                    } else
+                    {
+                        return RedirectToAction("Index");
+                    }
+                } else
+                {
+                    var ass = _context.Associations.Where(x => x.UserId == currentUser.Id && x.RoleId == adminRole.Id);
+                    if (ass.Any(x => x.GroupId == channel.GroupId))
+                    {
+                        _context.Remove(channel);
+                        _context.SaveChanges();
+                        _mongoOperations.DeleteCollection(channel.Name);
+                        return RedirectToAction("Index");
+                    } else
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
             }
             catch
             {
-                return View();
+                var channel = _context.Channels.Where(x => x.Id == id).FirstOrDefault();
+                channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == channel.AccessRestrictionId).FirstOrDefault();
+                channel.Group = _context.Groups.Where(x => x.Id == channel.GroupId).FirstOrDefault();
+                channel.User = _context.Users.Where(x => x.Id == channel.UserId).FirstOrDefault();
+                ChannelViewModel viewChannel = channel;
+                return View(viewChannel);
             }
         }
 

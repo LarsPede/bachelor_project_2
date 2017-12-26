@@ -105,14 +105,14 @@
                         </dd>
                         <dd style="border: white solid 1px; border-radius: 5px; background-color: black; color: white">
                             <div>example:</div>
-                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB="here"</div>
+                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB=here</div>
                         </dd>
                         <dd>
                             @Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)?querystring
                         </dd>
                         <dd style="border: white solid 1px; border-radius: 5px; background-color: black; color: white">
                             <div>example:</div>
-                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB="here"</div>
+                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB=here</div>
                         </dd>
                     }
                     else
@@ -128,14 +128,14 @@
                         </dd>
                         <dd style="border: white solid 1px; border-radius: 5px; background-color: black; color: white">
                             <div>example:</div>
-                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB="here"</div>
+                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB=here</div>
                         </dd>
                         <dd>
                             @Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?querystring
                         </dd>
                         <dd style="border: white solid 1px; border-radius: 5px; background-color: black; color: white">
                             <div>example:</div>
-                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB="here"</div>
+                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB=here</div>
                         </dd>
                     }
                 </dl>
@@ -151,7 +151,7 @@
                 else
                 {
                     <p>
-                        The creator of this channel has deemed the data irrelevant after @Html.DisplayFor(model => model.Channel.DaysRestriction).<br />
+                        The creator of this channel has deemed the data irrelevant after @Html.DisplayFor(model => model.Channel.DaysRestriction) days.<br />
                         The data will therefore be deleted around this time.
                     </p>
                 }
@@ -161,7 +161,7 @@
     <div>
         @if (Model.EditAccess)
         {
-            <a asp-action="Edit" asp-route-id="@Model.Channel.Id">Edit</a>
+            <a asp-action="Edit" asp-route-id="@Model.Channel.Id">Edit</a><br />
         }
         <a asp-action="Index">Back to List</a>
     </div>

@@ -68,7 +68,7 @@
         <div class="form-group">
             <label asp-for="DaysRestriction" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input type="number" min="0" asp-for="DaysRestriction" class="form-control" />
+                <input type="number" min="0" max="365" asp-for="DaysRestriction" class="form-control" />
                 <span asp-validation-for="DaysRestriction" class="text-danger"></span>
             </div>
         </div>

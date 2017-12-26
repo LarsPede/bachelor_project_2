@@ -193,6 +193,16 @@ namespace BachelorModelViewController.Data
             return documents;
         }
 
+        public async Task<List<BsonDocument>> GetAllFromCollectionBeforeTime(string collectionName, int fromTime)
+        {
+            // plus timestamp with one to account for entries created at the exact time.
+            fromTime++;
+            var since = new ObjectId(fromTime, 0, 0, 0);
+            var filter = Builders<BsonDocument>.Filter.Lt("_id", since);
+            var documents = await _context.GetMongoCollection(collectionName).Find(filter).ToListAsync();
+            return documents;
+        }
+
         public Task<IActionResult> GetFromCollection(string collectionName, string id)
         {
             throw new NotImplementedException();
