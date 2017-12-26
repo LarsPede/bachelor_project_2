@@ -11,6 +11,7 @@ using BachelorModelViewController.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using BachelorModelViewController.Interfaces;
 
 namespace BachelorModelViewController.Controllers
 {
@@ -20,9 +21,11 @@ namespace BachelorModelViewController.Controllers
         private readonly ApplicationDbContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<User> _userManager;
+        private readonly IMongoOperations _mongoOperations;
 
-        public GroupController(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
+        public GroupController(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager, IMongoOperations mongoOperations)
         {
+            _mongoOperations = mongoOperations;
             _context = context;
             _roleManager = roleManager;
             _userManager = userManager;
@@ -174,6 +177,14 @@ namespace BachelorModelViewController.Controllers
                 var group = _context.Groups.Where(x => x.Id == id).FirstOrDefault();
                 _context.Remove(group);
                 _context.SaveChanges();
+                if (_context.Channels.Where(x => x.GroupId == id).Any())
+                {
+                    var channels = _context.Channels.Where(x => x.GroupId == id).ToList();
+                    foreach (Channel c in channels)
+                    {
+                        _mongoOperations.DeleteCollection(c.Name);
+                    }
+                }
                 return RedirectToAction("Index");
             }
             catch
