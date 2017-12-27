@@ -1,0 +1,197 @@
+@using BachelorModelViewController.Models.ViewModels.ChannelViewModels
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
+@model DetailsViewModel
+
+    @{
+        ViewData["Title"] = "Details";
+    }
+
+    <h2>Details</h2>
+
+    <div>
+        @if (Model.Channel.UserId != null)
+        {
+            <h4>@Html.DisplayFor(model => model.Channel.Name) is a channel owned by the user: @Html.DisplayFor(model => model.Channel.User.FirstName) </h4>
+        }
+        else
+        {
+            <h4>@Html.DisplayFor(model => model.Channel.Name) is a channel owned by the group: @Html.DisplayFor(model => model.Channel.Group.Name) </h4>
+        }
+        <hr />
+        <div class="row">
+            <div class="col-sm-12">
+                <h4>Below is general information regarding the channel</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Channel.Name)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Channel.Name)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Channel.Description)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Channel.Description)
+                    </dd>
+                    @if (Model.PushAccess)
+                    {
+
+                        <dt>
+                            Datatype
+                        </dt>
+                        <dd>
+                            <i><u>The following datatype is used for both POST- and GET-calls:</u></i>
+                        </dd>
+                        <dd>
+                            Insert Datatype.
+                        </dd>
+                        <dd>
+                            <i><u>The following values are required for POST-calls:</u></i>
+                        </dd>
+                        <dd>
+                            Insert Required Fields.
+                        </dd>
+                        <dt>
+                            EntryPoints
+                        </dt>
+                        <dd>
+                            <i><u>The following REST calls are POST-calls:</u></i>
+                        </dd>
+                        <dd><br />
+                        </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/post_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)
+                        </dd>
+                        <dd><br />
+                        </dd>
+                        <dd>                            
+                            @Html.DisplayFor(model => model.BaseUrl)/api/post_many_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)
+                        </dd>
+
+                    }
+                    else
+                    {
+
+                        <dt>
+                            Datatype
+                        </dt>
+                        <dd>
+                            <i><u>The GET-calls will return the following datatype:</u></i>
+                        </dd>
+                        <dd>
+                            Insert Datatype.
+                        </dd>
+
+                    }
+                    <dt>
+                        EndPoints
+                    </dt>
+                    <dd>
+                        <i><u>The following REST calls are GET-calls:</u></i>
+                    </dd>
+                    <dd><br />
+                    </dd>
+                    @if (Model.CurrentUser != null)
+                    {
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_all_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)
+                        </dd>
+                        <dd><br />
+                        </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_all_channel_data_from/@Html.DisplayFor(model => model.Channel.Name)/[unix-timestamp-in-seconds]/@Html.DisplayFor(model => model.CurrentUser.Token)
+                        </dd>
+                        <dd><br />
+                        </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)?querystring
+                        </dd>
+                        <dd><br />
+                        </dd>
+                        <dd style="padding: 8px; border: white solid 1px; border-radius: 5px; background-color: black; color: white">
+                            <div>example:</div>
+                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB=here</div>
+                        </dd>
+                        <dd><br />
+                        </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)?querystring
+                        </dd>
+                        <dd><br />
+                        </dd>
+                        <dd style="padding: 8px; border: white solid 1px; border-radius: 5px; background-color: black; color: white">
+                            <div>example:</div>
+                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB=here</div>
+                        </dd>
+                    }
+                    else
+                    {
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_all_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free
+                        </dd>
+                        <dd><br />
+                        </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_all_channel_data_from/@Html.DisplayFor(model => model.Channel.Name)/[unix-timestamp-in-seconds]/free
+                        </dd>
+                        <dd><br />
+                        </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?querystring
+                        </dd>
+                        <dd style="padding: 8px; border: white solid 1px; border-radius: 5px; background-color: black; color: white">
+                            <div>example:</div>
+                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB=here</div>
+                        </dd>
+                        <dd><br />
+                        </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?querystring
+                        </dd>
+                        <dd> <br />
+                        </dd>
+                        <dd style="padding: 8px; border: white solid 1px; border-radius: 5px; background-color: black; color: white">
+                            <div>example:</div>
+                            <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB=here</div>
+                        </dd>
+                    }
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+
+                @if (Model.Channel.DaysRestriction == 0)
+                {
+                    <h5>
+                        <strong>
+                            We will keep all of this channels data until an administrator of the channel deletes the data.
+                        </strong>
+                    </h5>
+                }
+                else
+                {
+                    <h5>
+                        <strong>
+                            The creator of this channel has deemed the data irrelevant after @Html.DisplayFor(model => model.Channel.DaysRestriction) days.<br />
+                            Irrelevant data will therefore be deleted around this time.
+                        </strong>
+                    </h5>
+                }
+            </div>
+        </div>
+    </div>
+    <div>
+        @if (Model.EditAccess)
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Channel.Id">Edit</a><br />
+        }
+        <a asp-action="Index">Back to List</a>
+    </div>

@@ -20,6 +20,9 @@ namespace BachelorModelViewController.Interfaces
         // get all documents from a collection from time and forward
         Task<List<BsonDocument>> GetAllFromCollectionFromTime(string collectionName, int fromTime);
 
+        // get all documents from a collection from time and forward
+        Task<List<BsonDocument>> GetAllFromCollectionBeforeTime(string collectionName, int fromTime);
+
         // get all documents from a collection matching an or filter
         Task<List<BsonDocument>> GetAllFromCollectionByOrFilter(string collectionName, IQueryCollection jsonStringFilter);
 

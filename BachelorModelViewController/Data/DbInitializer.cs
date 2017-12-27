@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BachelorModelViewController.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using BachelorModelViewController.Interfaces;
 
 namespace BachelorModelViewController.Data
 {
@@ -30,6 +31,22 @@ namespace BachelorModelViewController.Data
                 context.SaveChanges();
             }
 
+            if (!context.AccessRestrictions.Any())
+            {
+                var accessRestrictions = new AccessRestriction[]
+                {
+                new AccessRestriction{GroupRestricted=false, UserRestricted=false},
+                new AccessRestriction{GroupRestricted=false, UserRestricted=true},
+                new AccessRestriction{GroupRestricted=true, UserRestricted=false},
+                new AccessRestriction{GroupRestricted=true, UserRestricted=false, AccessLevel=roleManager.FindByNameAsync("Supplier").Result},
+                new AccessRestriction{GroupRestricted=true, UserRestricted=false, AccessLevel=roleManager.FindByNameAsync("Administrator").Result}
+                };
+                foreach (AccessRestriction accessRestriction in accessRestrictions)
+                {
+                    context.AccessRestrictions.Add(accessRestriction);
+                }
+                context.SaveChanges();
+            }
             if (!context.AccessRestrictions.Any())
             {
                 var accessRestrictions = new AccessRestriction[]

@@ -1,0 +1,9 @@
+diff a/BachelorModelViewController/Controllers/ChannelController.cs b/BachelorModelViewController/Controllers/ChannelController.cs	(rejected hunks)
+@@ -10,7 +10,6 @@
+ using BachelorModelViewController.Data;
+ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+ using BachelorModelViewController.Models.ViewModels.ChannelViewModels;
+-using BachelorModelViewController.Interfaces;
+ 
+ namespace BachelorModelViewController.Controllers
+ {

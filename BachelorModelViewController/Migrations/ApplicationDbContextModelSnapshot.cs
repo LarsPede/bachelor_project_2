@@ -62,15 +62,13 @@ namespace BachelorModelViewController.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("AccessRestrictionId");
+                    b.Property<int>("AccessRestrictionId");
 
                     b.Property<int?>("ContentId");
 
+                    b.Property<int>("DaysRestriction");
+
                     b.Property<string>("Description");
-
-                    b.Property<string>("EndPoint");
-
-                    b.Property<string>("EntryPoint");
 
                     b.Property<int?>("GroupId");
 
@@ -317,7 +315,8 @@ namespace BachelorModelViewController.Migrations
                 {
                     b.HasOne("BachelorModelViewController.Models.AccessRestriction", "AccessRestriction")
                         .WithMany()
-                        .HasForeignKey("AccessRestrictionId");
+                        .HasForeignKey("AccessRestrictionId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("BachelorModelViewController.Models.Data.DatatypeModel", "Content")
                         .WithMany()

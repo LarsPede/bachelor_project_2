@@ -65,13 +65,13 @@ namespace BachelorModelViewController.Controllers
                                                             .Where(x => x.AccessRestriction.GroupRestricted == false
                                                                     && x.AccessRestriction.UserRestricted == true)
                                                                     .Select(x => new ChannelViewModel
-                                                                    {
-                                                                        Id = x.Id,
-                                                                        Name = x.Name,
-                                                                        Description = x.Description,
-                                                                        User = x.User,
-                                                                        Group = x.Group
-                                                                    }).ToList().AsQueryable();
+                                                                        {
+                                                                            Id = x.Id,
+                                                                            Name = x.Name,
+                                                                            Description = x.Description,
+                                                                            User = x.User,
+                                                                            Group = x.Group
+                                                                        }).ToList().AsQueryable();
 
             }
                 accessibleChannels.UnRestrictedChannels = _context.Channels
@@ -89,9 +89,42 @@ namespace BachelorModelViewController.Controllers
         }
 
         // GET: Channel/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            var details = new DetailsViewModel();
+            details.EditAccess = false;
+            details.PushAccess = false;
+            Channel tempChannel = _context.Channels.Where(x => x.Id == id).FirstOrDefault();
+            tempChannel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == tempChannel.AccessRestrictionId).FirstOrDefault();
+            tempChannel.Group = _context.Groups.Where(x => x.Id == tempChannel.GroupId).FirstOrDefault();
+            tempChannel.User = _context.Users.Where(x => x.Id == tempChannel.UserId).FirstOrDefault();
+            details.Channel = tempChannel;
+            if( currentUser != null)
+            {
+                details.CurrentUser = currentUser;
+                if (details.Channel.UserId != null && details.Channel.UserId == currentUser.Id)
+                {
+                    details.EditAccess = true;
+                    details.PushAccess = true;
+                }
+                else
+                {
+                    var adminRole = await _roleManager.FindByNameAsync("Administrator");
+                    var supplierRole = await _roleManager.FindByNameAsync("Supplier");
+                    if (_context.Associations.Where(x => x.UserId == currentUser.Id && x.RoleId == adminRole.Id).Any())
+                    {
+                        details.EditAccess = true;
+                        details.PushAccess = true;
+                    }
+                    else if (_context.Associations.Where(x => x.UserId == currentUser.Id && x.RoleId == supplierRole.Id).Any())
+                    {
+                        details.PushAccess = true;
+                    }
+                }
+            }
+            details.BaseUrl = HttpContext.Request.Host.Host + ":" + HttpContext.Request.Host.Port;
+            return View(details);
         }
 
         // GET: Channel/Create
@@ -111,12 +144,14 @@ namespace BachelorModelViewController.Controllers
             if (createView.AsUser.Value)
             {
                 createView.User = currentUser;
+                createView.UserId = createView.User.Id;
             } else
             {
                 createView.AccessibleGroups = _context.Associations.Where(x => x.User == currentUser && x.Role == adminRole).Select(x => x.Group).ToList();
                 if (createView.AccessibleGroups.Count() == 1)
                 {
                     createView.Group = createView.AccessibleGroups.First();
+                    createView.GroupId = createView.Group.Id;
                 }
             }
             return View(createView);
@@ -125,7 +160,7 @@ namespace BachelorModelViewController.Controllers
         // POST: Channel/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreateViewModel model)
+        public ActionResult Create(CreateViewModel model)
         {
             try
             {
@@ -156,10 +191,7 @@ namespace BachelorModelViewController.Controllers
                             channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == 1).First();
                             break;
                     }
-                    if (model.GroupId != null)
-                    {
-                        channel.Group = _context.Groups.Where(x => x.Id == model.GroupId).FirstOrDefault();
-                    }
+                    channel.Group = _context.Groups.Where(x => x.Id == model.GroupId).FirstOrDefault();
                     channel.User = _context.Users.Where(x => x.Id == model.UserId).FirstOrDefault();
                     channel.Name = model.Name;
                     channel.Description = channel.Description;
@@ -180,8 +212,8 @@ namespace BachelorModelViewController.Controllers
                 }
                 if (!model.AsUser.Value)
                 { 
-                    var currentUser = await _userManager.GetUserAsync(HttpContext.User);
-                    var adminRole = await _roleManager.FindByNameAsync("Administrator");
+                    var currentUser = _userManager.GetUserAsync(HttpContext.User).Result;
+                    var adminRole = _roleManager.FindByNameAsync("Administrator").Result;
                     model.AccessibleGroups = _context.Associations.Where(x => x.User == currentUser && x.Role == adminRole).Select(x => x.Group).ToList();
                     if (model.AccessibleGroups.Count() == 1)
                     {
@@ -193,53 +225,101 @@ namespace BachelorModelViewController.Controllers
             }
             catch(Exception e)
             {
-                return View(model);
+                return View();
             }
         }
 
         // GET: Channel/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var channel = _context.Channels.Where(x => x.Id == id).FirstOrDefault();
+            channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == channel.AccessRestrictionId).FirstOrDefault();
+            channel.Group = _context.Groups.Where(x => x.Id == channel.GroupId).FirstOrDefault();
+            channel.User = _context.Users.Where(x => x.Id == channel.UserId).FirstOrDefault();
+            ChannelViewModel viewChannel = channel;
+            return View(viewChannel);
         }
 
         // POST: Channel/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, ChannelViewModel model)
         {
             try
             {
-                // TODO: Add update logic here
-
+                var channel = _context.Channels.Where(x => x.Id == id).FirstOrDefault();
+                channel.Description = model.Description;
+                channel.DaysRestriction = model.DaysRestriction;
+                _context.SaveChanges();
                 return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                var channel = _context.Channels.Where(x => x.Id == id).FirstOrDefault();
+                channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == channel.AccessRestrictionId).FirstOrDefault();
+                channel.Group = _context.Groups.Where(x => x.Id == channel.GroupId).FirstOrDefault();
+                channel.User = _context.Users.Where(x => x.Id == channel.UserId).FirstOrDefault();
+                ChannelViewModel viewChannel = channel;
+                return View(viewChannel);
             }
         }
 
         // GET: Channel/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var channel = _context.Channels.Where(x => x.Id == id).FirstOrDefault();
+            channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == channel.AccessRestrictionId).FirstOrDefault();
+            channel.Group = _context.Groups.Where(x => x.Id == channel.GroupId).FirstOrDefault();
+            channel.User = _context.Users.Where(x => x.Id == channel.UserId).FirstOrDefault();
+            ChannelViewModel viewChannel = channel;
+            return View(viewChannel);
         }
 
         // POST: Channel/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, IFormCollection collection)
         {
             try
             {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                var adminRole = await _roleManager.FindByNameAsync("Administrator");
+                var channel = _context.Channels.Where(x => x.Id == id).FirstOrDefault();
+                if (channel.UserId != null)
+                {
+                    if (channel.UserId == currentUser.Id)
+                    {
+                        _context.Remove(channel);
+                        _context.SaveChanges();
+                        _mongoOperations.DeleteCollection(channel.Name);
+                        return RedirectToAction("Index");
+                    } else
+                    {
+                        return RedirectToAction("Index");
+                    }
+                } else
+                {
+                    var ass = _context.Associations.Where(x => x.UserId == currentUser.Id && x.RoleId == adminRole.Id);
+                    if (ass.Any(x => x.GroupId == channel.GroupId))
+                    {
+                        _context.Remove(channel);
+                        _context.SaveChanges();
+                        _mongoOperations.DeleteCollection(channel.Name);
+                        return RedirectToAction("Index");
+                    } else
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
             }
             catch
             {
-                return View();
+                var channel = _context.Channels.Where(x => x.Id == id).FirstOrDefault();
+                channel.AccessRestriction = _context.AccessRestrictions.Where(x => x.Id == channel.AccessRestrictionId).FirstOrDefault();
+                channel.Group = _context.Groups.Where(x => x.Id == channel.GroupId).FirstOrDefault();
+                channel.User = _context.Users.Where(x => x.Id == channel.UserId).FirstOrDefault();
+                ChannelViewModel viewChannel = channel;
+                return View(viewChannel);
             }
         }
 

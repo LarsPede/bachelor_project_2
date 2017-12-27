@@ -31,7 +31,7 @@ namespace BachelorModelViewController.Data
                 {
                     throw new MongoException("This channel already exists. You have to change the channel-name.");
                 }
-                _context.CreateDatabase(collectionName);
+                _context.CreateCollection(collectionName);
                 return new Task<bool>(() => true);
             }
             catch (Exception e)
@@ -189,6 +189,16 @@ namespace BachelorModelViewController.Data
         {
             var since = new ObjectId(fromTime, 0, 0, 0);
             var filter = Builders<BsonDocument>.Filter.Gt("_id", since);
+            var documents = await _context.GetMongoCollection(collectionName).Find(filter).ToListAsync();
+            return documents;
+        }
+
+        public async Task<List<BsonDocument>> GetAllFromCollectionBeforeTime(string collectionName, int fromTime)
+        {
+            // plus timestamp with one to account for entries created at the exact time.
+            fromTime++;
+            var since = new ObjectId(fromTime, 0, 0, 0);
+            var filter = Builders<BsonDocument>.Filter.Lt("_id", since);
             var documents = await _context.GetMongoCollection(collectionName).Find(filter).ToListAsync();
             return documents;
         }
