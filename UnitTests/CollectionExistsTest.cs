@@ -15,7 +15,7 @@ namespace UnitTests
         public void Initalize()
         {
             // connection to live db.
-            IOptions<MongoSettings> settings = Options.Create<MongoSettings>(new MongoSettings { ConnectionString = "mongodb://ec2-18-221-88-228.us-east-2.compute.amazonaws.com:41337", Database = "cupid" });
+            IOptions<MongoSettings> settings = Options.Create<MongoSettings>(new MongoSettings { ConnectionString = "mongodb://ec2-18-221-88-228.us-east-2.compute.amazonaws.com:27017", Database = "cupid" });
             _mongoOperations = new MongoOperations(settings);
         }
 

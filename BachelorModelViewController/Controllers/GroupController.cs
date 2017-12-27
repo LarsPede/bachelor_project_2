@@ -174,17 +174,19 @@ namespace BachelorModelViewController.Controllers
         {
             try
             {
-                var group = _context.Groups.Where(x => x.Id == id).FirstOrDefault();
-                _context.Remove(group);
-                _context.SaveChanges();
                 if (_context.Channels.Where(x => x.GroupId == id).Any())
                 {
                     var channels = _context.Channels.Where(x => x.GroupId == id).ToList();
                     foreach (Channel c in channels)
                     {
                         _mongoOperations.DeleteCollection(c.Name);
+                        _context.Remove(c);
+                        _context.SaveChanges();
                     }
                 }
+                var group = _context.Groups.Where(x => x.Id == id).FirstOrDefault();
+                _context.Remove(group);
+                _context.SaveChanges();
                 return RedirectToAction("Index");
             }
             catch
