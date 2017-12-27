@@ -41,10 +41,7 @@ namespace BachelorModelViewController
             }
 
             host.Run();
-
-            BachelorModelViewController.UnitTests.DatatypeTest datatypeTest = new BachelorModelViewController.UnitTests.DatatypeTest();
-            datatypeTest.run();
-
+            
             
             while (string.IsNullOrEmpty(System.Console.ReadKey().ToString())) ;
         }

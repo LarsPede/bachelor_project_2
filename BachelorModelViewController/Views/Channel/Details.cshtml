@@ -22,7 +22,7 @@
         <hr />
         <div class="row">
             <div class="col-sm-12">
-                <p>Below is general information regarding the channel</p>
+                <h4>Below is general information regarding the channel</h4>
             </div>
         </div>
         <div class="row">
@@ -64,8 +64,12 @@
                         <dd>
                             <i><u>The following REST calls are POST-calls:</u></i>
                         </dd>
+                        <dd><br />
+                        </dd>
                         <dd>
                             @Html.DisplayFor(model => model.BaseUrl)/api/post_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)
+                        </dd>
+                        <dd><br />
                         </dd>
                         <dd>                            
                             @Html.DisplayFor(model => model.BaseUrl)/api/post_many_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)
@@ -92,25 +96,37 @@
                     <dd>
                         <i><u>The following REST calls are GET-calls:</u></i>
                     </dd>
+                    <dd><br />
+                    </dd>
                     @if (Model.CurrentUser != null)
                     {
                         <dd>
                             @Html.DisplayFor(model => model.BaseUrl)/api/get_all_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)
                         </dd>
+                        <dd><br />
+                        </dd>
                         <dd>
                             @Html.DisplayFor(model => model.BaseUrl)/api/get_all_channel_data_from/@Html.DisplayFor(model => model.Channel.Name)/[unix-timestamp-in-seconds]/@Html.DisplayFor(model => model.CurrentUser.Token)
+                        </dd>
+                        <dd><br />
                         </dd>
                         <dd>
                             @Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)?querystring
                         </dd>
-                        <dd style="border: white solid 1px; border-radius: 5px; background-color: black; color: white">
+                        <dd><br />
+                        </dd>
+                        <dd style="padding: 8px; border: white solid 1px; border-radius: 5px; background-color: black; color: white">
                             <div>example:</div>
                             <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB=here</div>
+                        </dd>
+                        <dd><br />
                         </dd>
                         <dd>
                             @Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/@Html.DisplayFor(model => model.CurrentUser.Token)?querystring
                         </dd>
-                        <dd style="border: white solid 1px; border-radius: 5px; background-color: black; color: white">
+                        <dd><br />
+                        </dd>
+                        <dd style="padding: 8px; border: white solid 1px; border-radius: 5px; background-color: black; color: white">
                             <div>example:</div>
                             <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB=here</div>
                         </dd>
@@ -120,20 +136,28 @@
                         <dd>
                             @Html.DisplayFor(model => model.BaseUrl)/api/get_all_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free
                         </dd>
+                        <dd><br />
+                        </dd>
                         <dd>
                             @Html.DisplayFor(model => model.BaseUrl)/api/get_all_channel_data_from/@Html.DisplayFor(model => model.Channel.Name)/[unix-timestamp-in-seconds]/free
+                        </dd>
+                        <dd><br />
                         </dd>
                         <dd>
                             @Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?querystring
                         </dd>
-                        <dd style="border: white solid 1px; border-radius: 5px; background-color: black; color: white">
+                        <dd style="padding: 8px; border: white solid 1px; border-radius: 5px; background-color: black; color: white">
                             <div>example:</div>
                             <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_or_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB=here</div>
+                        </dd>
+                        <dd><br />
                         </dd>
                         <dd>
                             @Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?querystring
                         </dd>
-                        <dd style="border: white solid 1px; border-radius: 5px; background-color: black; color: white">
+                        <dd> <br />
+                        </dd>
+                        <dd style="padding: 8px; border: white solid 1px; border-radius: 5px; background-color: black; color: white">
                             <div>example:</div>
                             <div>@Html.DisplayFor(model => model.BaseUrl)/api/get_and_filtered_channel_data/@Html.DisplayFor(model => model.Channel.Name)/free?variableA__gt=1&variableB=here</div>
                         </dd>
@@ -146,14 +170,20 @@
 
                 @if (Model.Channel.DaysRestriction == 0)
                 {
-                    <p>We will keep all of this channels data until an administrator of the channel deletes the data.</p>
+                    <h5>
+                        <strong>
+                            We will keep all of this channels data until an administrator of the channel deletes the data.
+                        </strong>
+                    </h5>
                 }
                 else
                 {
-                    <p>
-                        The creator of this channel has deemed the data irrelevant after @Html.DisplayFor(model => model.Channel.DaysRestriction) days.<br />
-                        The data will therefore be deleted around this time.
-                    </p>
+                    <h5>
+                        <strong>
+                            The creator of this channel has deemed the data irrelevant after @Html.DisplayFor(model => model.Channel.DaysRestriction) days.<br />
+                            Irrelevant data will therefore be deleted around this time.
+                        </strong>
+                    </h5>
                 }
             </div>
         </div>
