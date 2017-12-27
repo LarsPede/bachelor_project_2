@@ -23,6 +23,23 @@ namespace BachelorModelViewController.Data
             _context = new MongoDbContext(settings);
         }
 
+        public Task<bool> CreateCollection(string collectionName)
+        {
+            try
+            {
+                if (_context.CollectionExists(collectionName).Result)
+                {
+                    throw new MongoException("This channel already exists. You have to change the channel-name.");
+                }
+                _context.CreateDatabase(collectionName);
+                return new Task<bool>(() => true);
+            }
+            catch (Exception e)
+            {
+                throw (e);
+            }
+        }
+
         public Task<bool> AddToCollection(string collectionName, BsonDocument document)
         {
             try
@@ -70,7 +87,7 @@ namespace BachelorModelViewController.Data
                 IFormatProvider provider = CultureInfo.CurrentCulture;
 
                 string key = queryStringFilter.Key.Replace("__gt", "");
-                key = queryStringFilter.Key.Replace("__lt", "");
+                key = key.Replace("__lt", "");
 
                 int value;
                 if (int.TryParse(queryStringFilter.Value, NumberStyles.Integer, provider, out value))
@@ -123,7 +140,7 @@ namespace BachelorModelViewController.Data
                 IFormatProvider provider = CultureInfo.CurrentCulture;
 
                 string key = queryStringFilter.Key.Replace("__gt", "");
-                key = queryStringFilter.Key.Replace("__lt", "");
+                key = key.Replace("__lt", "");
 
                 int value;
                 if (int.TryParse(queryStringFilter.Value, NumberStyles.Integer, provider, out value))
@@ -181,9 +198,17 @@ namespace BachelorModelViewController.Data
             throw new NotImplementedException();
         }
 
-        public Task<IActionResult> RemoveAllFromCollection(string collectionName)
+        public bool RemoveAllFromCollection(string collectionName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.GetMongoCollection(collectionName).DeleteMany(_ => true);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public Task<IActionResult> RemoveFromCollection(string collectionName, string id)
@@ -194,6 +219,20 @@ namespace BachelorModelViewController.Data
         public Task<IActionResult> UpdateInCollection(string collectionName, string id, string body)
         {
             throw new NotImplementedException();
+        }
+
+        public bool DeleteCollection(string collectionName)
+        {
+            try
+            {
+                RemoveAllFromCollection(collectionName);
+                _context.DeleteCollection(collectionName);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
