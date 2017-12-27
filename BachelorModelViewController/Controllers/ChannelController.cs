@@ -12,6 +12,7 @@ using BachelorModelViewController.Helpers;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using BachelorModelViewController.Models.ViewModels.ChannelViewModels;
 using BachelorModelViewController.Interfaces;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BachelorModelViewController.Controllers
 {
@@ -164,7 +165,13 @@ namespace BachelorModelViewController.Controllers
         {
             try
             {
+                if (_context.Channels.Any(x => x.Name.Equals(model.Name)));
+                {
+                    throw new ArgumentException("Channelname taken");
+                }
+
                 var channel = new Channel();
+                
                 if (ModelState.IsValid)
                 {
                     switch (model.AccessRestriction)
@@ -202,6 +209,11 @@ namespace BachelorModelViewController.Controllers
                     //var something = datahelper.HandleAsObject(model.JsonContentAsString);
                     var jsonObject = datahelper.TakeJson(model.JsonContentAsString);
 
+                    var requiredData = datahelper.GetRequired(model.JsonContentAsString, model.JsonRequiredKeys);
+
+                    
+
+                    _mongoOperations.AddMultipleToCollection("RequiredFields", requiredData);
 
                     #endregion
 
@@ -210,6 +222,7 @@ namespace BachelorModelViewController.Controllers
                     _mongoOperations.CreateCollection(model.Name);
                     return RedirectToAction("Index");
                 }
+
                 if (!model.AsUser.Value)
                 { 
                     var currentUser = _userManager.GetUserAsync(HttpContext.User).Result;
@@ -222,6 +235,22 @@ namespace BachelorModelViewController.Controllers
                 }
                 return View(model);
 
+            }
+            catch(ArgumentException e)
+            {
+                if (!model.AsUser.Value)
+                {
+                    var currentUser = _userManager.GetUserAsync(HttpContext.User).Result;
+                    var adminRole = _roleManager.FindByNameAsync("Administrator").Result;
+                    model.AccessibleGroups = _context.Associations.Where(x => x.User == currentUser && x.Role == adminRole).Select(x => x.Group).ToList();
+                    if (model.AccessibleGroups.Count() == 1)
+                    {
+                        model.Group = model.AccessibleGroups.First();
+                    }
+                    
+                }
+                model.DuplicateName = true;
+                return View(model);
             }
             catch(Exception e)
             {

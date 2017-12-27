@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using BachelorModelViewController.Models.ViewModels.DataViewModels;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.Bson.Serialization;
+using System.IO;
+using Newtonsoft.Json.Bson;
+using MongoDB.Bson.Serialization.Serializers;
 
 namespace BachelorModelViewController.Helpers
 {
@@ -259,18 +265,68 @@ namespace BachelorModelViewController.Helpers
             return result;
         }
 
-        public List<Tuple<string,string>> UnpackChecklist(JObject jObject)
+        public List<BsonDocument> GetRequired(string content, string requirements)
         {
-            List<Tuple<string, string>> list = new List<Tuple<string, string>>();
+           
 
-            foreach(var jprop in jObject.Properties())
+            if (string.IsNullOrEmpty(requirements))
             {
-                if (jprop.Value.Contains("requiredKey:true"))
+                return new List<BsonDocument>();
+            }
+
+            var jContent = JObject.Parse(content)["value"];
+            var jReq = JObject.Parse(requirements)["requiredKeys"];
+            var jRes = new JObject();
+            string name = "";
+            string type = "";
+            List<Requirement> setup = new List<Requirement>();
+            
+
+            foreach (JValue propReq in jReq)
+            {
+                foreach (JProperty propCont in jContent)
                 {
-                    var jprops = jprop.Values();
-                    list.Add(new Tuple<string, string>(jprops.V)
+                    if (propCont.Name == propReq.Value.ToString())
+                    {
+                        name = propCont.Name;
+                        type = propCont.Value["typeName"].ToString();
+                        
+                        setup.Add(new Requirement(name, type));
+                    }
                 }
             }
+
+            BsonDocument result = new BsonDocument();
+
+            string json = JsonConvert.SerializeObject(setup);
+            
+            BsonArray bsonItem = BsonSerializer.Deserialize<BsonArray>(json);
+
+            List<BsonDocument> somehting2 = new List<BsonDocument>();
+
+            foreach (var i in bsonItem)
+            {
+                somehting2.Add(i.AsBsonDocument);
+            }
+
+            return somehting2;
+        }
+    }
+
+    public class Requirement
+    {
+        string name;
+        string type;
+
+        public Requirement()
+        {
+
+        }
+
+        public Requirement(string n, string t)
+        {
+            name = n;
+            type = t;
         }
     }
 }

@@ -28,5 +28,6 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
         public string JsonContentAsString { get; set; }
         public string JsonRequiredKeys { get; set; }
         public bool? AsUser { get; set; }
+        public bool? DuplicateName { get; set; }
     }
 }
