@@ -248,5 +248,29 @@ namespace BachelorModelViewController.Helpers
 
             return result;
         }
+
+        public bool AuthenticateJSON(string jsonIn, string jsonRequired)
+        {
+            bool result = false;
+
+            var jIn = JObject.Parse(jsonIn);
+            var jCheck = JObject.Parse(jsonRequired);
+            
+            return result;
+        }
+
+        public List<Tuple<string,string>> UnpackChecklist(JObject jObject)
+        {
+            List<Tuple<string, string>> list = new List<Tuple<string, string>>();
+
+            foreach(var jprop in jObject.Properties())
+            {
+                if (jprop.Value.Contains("requiredKey:true"))
+                {
+                    var jprops = jprop.Values();
+                    list.Add(new Tuple<string, string>(jprops.V)
+                }
+            }
+        }
     }
 }
