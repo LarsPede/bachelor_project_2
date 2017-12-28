@@ -298,7 +298,25 @@ namespace BachelorModelViewController.Helpers
 
             BsonDocument result = new BsonDocument();
 
-            string json = JsonConvert.SerializeObject(setup);
+            //dynamic collectionWrapper = new
+            //{
+
+            //    myRoot = setup
+
+            //};
+
+            //string jForce = "{\"collection\":[";
+
+            //foreach(var set in setup)
+            //{
+            //    jForce += set.ToJsonString() + ",";
+            //}
+            //jForce = jForce.Remove(jForce.Length - 1);
+            //jForce += "]";
+
+            //BsonArray bsonItemF = BsonSerializer.Deserialize<BsonArray>(jForce);
+
+            string json = JsonConvert.SerializeObject(collectionWrapper);
             
             BsonArray bsonItem = BsonSerializer.Deserialize<BsonArray>(json);
 
@@ -310,6 +328,33 @@ namespace BachelorModelViewController.Helpers
             }
 
             return somehting2;
+        }
+
+        public List<Requirement> GetRequiredList(string s)
+        {
+            List<Requirement> result = new List<Requirement>();
+
+            var jArray = JsonConvert.DeserializeObject(s) as JArray;
+
+            foreach (var item in jArray)
+            {
+                result.Add(JsonConvert.DeserializeObject<Requirement>(item.ToString()));
+            }
+
+            return result;
+        }
+
+        // recursively yield all children of json
+        private static IEnumerable<JToken> AllChildren(JToken json)
+        {
+            foreach (var c in json.Children())
+            {
+                yield return c;
+                foreach (var cc in AllChildren(c))
+                {
+                    yield return cc;
+                }
+            }
         }
     }
 
@@ -327,6 +372,11 @@ namespace BachelorModelViewController.Helpers
         {
             name = n;
             type = t;
+        }
+
+        public string ToJsonString()
+        {
+            return "{\"" + name + "\":\"" + type + "\"}";
         }
     }
 }

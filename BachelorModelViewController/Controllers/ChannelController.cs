@@ -165,7 +165,7 @@ namespace BachelorModelViewController.Controllers
         {
             try
             {
-                if (_context.Channels.Any(x => x.Name.Equals(model.Name)));
+                if (_context.Channels.Any(x => x.Name.Equals(model.Name))) 
                 {
                     throw new ArgumentException("Channelname taken");
                 }
@@ -211,7 +211,7 @@ namespace BachelorModelViewController.Controllers
 
                     var requiredData = datahelper.GetRequired(model.JsonContentAsString, model.JsonRequiredKeys);
 
-                    
+                    var requirements = datahelper.GetRequiredList(JsonConvert.SerializeObject(requiredData));
 
                     _mongoOperations.AddMultipleToCollection("RequiredFields", requiredData);
 
