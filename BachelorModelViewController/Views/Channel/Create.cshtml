@@ -22,13 +22,13 @@
         }
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        @if (Model.AccessibleGroups != null && Model.Group == null)
+        @if (!Model.AsUser.Value && Model.Group == null)
         {
             <div class="form-group">
                 <label asp-for="Group" class="col-md-2 control-label"></label>
                 <div class="col-md-10">
                     @Html.DropDownListFor(
-                            model => model.Group.Id,
+                            model => model.GroupId,
                             new SelectList(
                                 Model.AccessibleGroups,
                                 "Id",
@@ -40,14 +40,17 @@
         } else if (Model.Group != null)
         {
             <div class="form-group">
-                @Html.HiddenFor(m => m.Group.Id)
+                @Html.HiddenFor(m => m.GroupId)
             </div>
         } else
         {
             <div class="form-group">
-                @Html.HiddenFor(m => m.User.Id)
+                @Html.HiddenFor(m => m.UserId)
             </div>
         }
+        <div class="form-group">
+            @Html.HiddenFor(m => m.AsUser)
+        </div>
          <div class="form-group">
             <label asp-for="Name" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -60,6 +63,13 @@
             <div class="col-md-10">
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="DaysRestriction" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input type="number" min="0" max="365" asp-for="DaysRestriction" class="form-control" />
+                <span asp-validation-for="DaysRestriction" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
@@ -88,36 +98,10 @@
                         "Standard restrictions")
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-md-2 control-label"><label>Define your data</label> <span class="glyphicon glyphicon-question-sign"></span></div>
-            <div class="col-md-10 form-inline">
-                <span>Send an example of a json string</span>
-                <input type="radio" name="jsonContent" value="1" checked />
-                <span>Define the datatype from our site</span>
-                <input type="radio" name="jsonContent" value="2" />
-            </div>
-        </div>
         <div class="form-group json-upload">
-            <div class="col-md-offset-2 col-md-10">
-                <input asp-for="JsonContentAsString" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group json-upload" style="display: none;">
-            <div class="col-md-offset-2 col-md-10 json-upload-fields">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <input class="form-control" />
-                            </div>
-                            <div class="col-sm-1 text-center">
-                                :
-                            </div>
-                            <div class="col-sm-3">
-                                <input class="form-control" />
-                            </div>
-                        </div>
-                    </div>
+            <div class="col-md-2 control-label"><label>Define your data</label> <span class="glyphicon glyphicon-question-sign"></span></div>
+            <div class="col-md-10">
+                <div id="json-input" class="json-upload">
                 </div>
             </div>
         </div>
@@ -143,17 +127,6 @@
                     $('.role-demanded').hide();
                 }
                 
-            }
-        };
-    }
-
-    var radio = document.channelCreate.jsonContent;
-    var prevRadio = null;
-    for (var i = 0; i < rad.length; i++) {
-        radio[i].onclick = function () {
-            if (this !== prev) {
-                prevRadio = this;
-                $('.json-upload').toggle();
             }
         };
     }

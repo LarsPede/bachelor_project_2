@@ -14,6 +14,8 @@ namespace BachelorModelViewController.Models
         public int Id { get; set; }
         public bool GroupRestricted { get; set; }
         public bool UserRestricted { get; set; }
+        public string AccessLevelId { get; set; }
+        [ForeignKey("AccessLevelId")]
         public IdentityRole AccessLevel { get; set; }
     }
 }

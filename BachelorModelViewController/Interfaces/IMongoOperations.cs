@@ -12,10 +12,16 @@ namespace BachelorModelViewController.Interfaces
     {
 
         // get all documents from a collection
+        Task<bool> CreateCollection(string collectionName);
+
+        // get all documents from a collection
         Task<List<BsonDocument>> GetAllFromCollection(string collectionName);
 
         // get all documents from a collection from time and forward
         Task<List<BsonDocument>> GetAllFromCollectionFromTime(string collectionName, int fromTime);
+
+        // get all documents from a collection from time and forward
+        Task<List<BsonDocument>> GetAllFromCollectionBeforeTime(string collectionName, int fromTime);
 
         // get all documents from a collection matching an or filter
         Task<List<BsonDocument>> GetAllFromCollectionByOrFilter(string collectionName, IQueryCollection jsonStringFilter);
@@ -27,7 +33,7 @@ namespace BachelorModelViewController.Interfaces
         Task<IActionResult> GetFromCollection(string collectionName, string id);
 
         // add new document
-        Task<IActionResult> AddToCollection(string collectionName, BsonDocument document);
+        Task<bool> AddToCollection(string collectionName, BsonDocument document);
 
         // add multiple new documents
         Task<int> AddToCollection(string collectionName, IEnumerable<BsonDocument> documents);
@@ -39,7 +45,10 @@ namespace BachelorModelViewController.Interfaces
         Task<IActionResult> UpdateInCollection(string collectionName, string id, string body);
 
         // should be used with high cautious
-        Task<IActionResult> RemoveAllFromCollection(string collectionName);
+        bool RemoveAllFromCollection(string collectionName);
+
+        // should be used with high cautious
+        bool DeleteCollection(string collectionName);
 
         // check if Mongo contains collection
         bool CollectionExists(string collectionName);

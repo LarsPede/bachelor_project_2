@@ -14,8 +14,15 @@ namespace BachelorModelViewController.Models
         [Required]
         public string Name { get; set; }
         public string Description { get; set; }
+        public string UserId { get; set; }
+        [ForeignKey("UserId")]
         public User User { get; set; }
+        public int? GroupId { get; set; }
+        [ForeignKey("GroupId")]
         public Group Group { get; set; }
+        public int AccessRestrictionId { get; set; }
+        public int? DaysRestriction { get; set; }
+        [ForeignKey("AccessRestrictionId")]
         public AccessRestriction AccessRestriction { get; set; }
         public DatatypeModel Content { get; set; }
 

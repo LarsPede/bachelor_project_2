@@ -17,6 +17,7 @@ namespace BachelorModelViewController.Data
         public MongoDbContext(IOptions<MongoSettings> settings)
         {
             var client = new MongoClient(settings.Value.ConnectionString);
+
             if (client != null)
                 _database = client.GetDatabase(settings.Value.Database);
         }
@@ -24,6 +25,30 @@ namespace BachelorModelViewController.Data
         public IMongoCollection<BsonDocument> GetMongoCollection(string name)
         {
             return _database.GetCollection<BsonDocument>(name);
+        }
+        public bool CreateCollection(string name)
+        {
+            try
+            {
+                _database.CreateCollection(name);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        public bool DeleteCollection(string name)
+        {
+            try
+            {
+                _database.DropCollection(name);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<bool> CollectionExists(string collectionName)
