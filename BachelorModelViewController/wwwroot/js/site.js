@@ -3,27 +3,6 @@
 var h = preact.h;
 var Component = preact.Component
 
-class Counter extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            time: Date.now()
-        };
-    }
-
-    componentDidMount() {
-        setInterval(() => {
-            this.setState({
-                time: Date.now()
-            });
-        }, 1000);
-    }
-
-    render(props, state) {
-        return state.time;
-    }
-}
-
 function ObjectInput({ type, first, onType }) {
     return h(
         "div",
@@ -210,7 +189,7 @@ class App extends Component {
             showRaw: false,
             type: { typeName: "Object", value: { "id": { typeName: "String", value: null, requiredKey: true }} },
             stringType: "{ \"id\" : \"\" }",
-            requiredKeys: "{ \"requiredKeys\" : [ \"id\" ] }",
+            requiredKeys: "{ \"required\" : [ \"id\" ] }",
             sendType: "{ \"typeName\": \"Object\", \"value\": { \"id\": { \"typeName\": \"String\", \"value\": null, \"requiredKey\": true }} }"
 
         }
@@ -430,7 +409,7 @@ class App extends Component {
                     stringType: state.stringType, type: state.type, parseType: string => {
                         this.setState({ stringType: string });
                         this.setState({ type: this.tryParseString(string) });
-                        this.setState({ requiredKeys: "{\"keys\" : []}" });
+                        this.setState({ requiredKeys: "{\"required\" : []}" });
                     }
                 })
                 :
