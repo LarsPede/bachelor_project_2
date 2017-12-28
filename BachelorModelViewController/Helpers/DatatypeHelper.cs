@@ -316,7 +316,7 @@ namespace BachelorModelViewController.Helpers
 
             //BsonArray bsonItemF = BsonSerializer.Deserialize<BsonArray>(jForce);
 
-            string json = JsonConvert.SerializeObject(collectionWrapper);
+            string json = JsonConvert.SerializeObject(setup);
             
             BsonArray bsonItem = BsonSerializer.Deserialize<BsonArray>(json);
 
