@@ -50,13 +50,13 @@
                             <i><u>The following datatype is used for both POST- and GET-calls:</u></i>
                         </dd>
                         <dd>
-                            Insert Datatype.
+                            @Html.DisplayFor(model => model.Channel.Content)
                         </dd>
                         <dd>
                             <i><u>The following values are required for POST-calls:</u></i>
                         </dd>
                         <dd>
-                            Insert Required Fields.
+                            @Html.DisplayFor(model => model.Channel.ReqContent)
                         </dd>
                         <dt>
                             EntryPoints
@@ -86,7 +86,7 @@
                             <i><u>The GET-calls will return the following datatype:</u></i>
                         </dd>
                         <dd>
-                            Insert Datatype.
+                            @Html.DisplayFor(model => model.Channel.Content)
                         </dd>
 
                     }

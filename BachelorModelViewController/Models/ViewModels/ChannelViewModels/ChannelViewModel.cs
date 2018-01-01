@@ -25,6 +25,8 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
         public int AccessRestrictionId { get; set; }
         [ForeignKey("AccessRestrictionId")]
         public AccessRestrictionViewModel AccessRestriction { get; set; }
+        public string Content { get; set; }
+        public string ReqContent { get; set; }
 
         public static implicit operator ChannelViewModel(Channel channel)
         {
@@ -39,7 +41,9 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
                 Group = channel.Group,
                 DaysRestriction = channel.DaysRestriction,
                 AccessRestrictionId = channel.AccessRestrictionId,
-                AccessRestriction = channel.AccessRestriction
+                AccessRestriction = channel.AccessRestriction,
+                Content = channel.Content,
+                ReqContent = channel.ReqContent
             };
         }
 
@@ -56,7 +60,9 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
                 Group = vm.Group,
                 DaysRestriction = vm.DaysRestriction,
                 AccessRestrictionId = vm.AccessRestrictionId,
-                AccessRestriction = vm.AccessRestriction
+                AccessRestriction = vm.AccessRestriction,
+                Content = vm.Content,
+                ReqContent = vm.ReqContent
             };
         }
     }

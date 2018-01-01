@@ -14,5 +14,6 @@ namespace BachelorModelViewController.Models.ViewModels.ChannelViewModels
         public bool PushAccess { get; set; }
         public string BaseUrl { get; set; }
         public User CurrentUser { get; set; }
+        
     }
 }

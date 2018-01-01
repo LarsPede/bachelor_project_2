@@ -24,7 +24,8 @@ namespace BachelorModelViewController.Models
         public int? DaysRestriction { get; set; }
         [ForeignKey("AccessRestrictionId")]
         public AccessRestriction AccessRestriction { get; set; }
-        public DatatypeModel Content { get; set; }
+        public string Content { get; set; }
+        public string ReqContent { get; set; }
 
     }
 }

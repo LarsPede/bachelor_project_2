@@ -101,6 +101,7 @@ namespace BachelorModelViewController.Controllers
             tempChannel.Group = _context.Groups.Where(x => x.Id == tempChannel.GroupId).FirstOrDefault();
             tempChannel.User = _context.Users.Where(x => x.Id == tempChannel.UserId).FirstOrDefault();
             details.Channel = tempChannel;
+            
             if( currentUser != null)
             {
                 details.CurrentUser = currentUser;
@@ -208,11 +209,12 @@ namespace BachelorModelViewController.Controllers
                     var datahelper = new DatatypeHelper();
                     //var something = datahelper.HandleAsObject(model.JsonContentAsString);
                     var jsonObject = datahelper.TakeJson(model.JsonContentAsString);
+                    channel.Content = model.JsonContentAsString;
 
                     var requiredData = datahelper.GetRequired(model.JsonContentAsString, model.JsonRequiredKeys);
-
-                    var requirements = datahelper.GetRequiredList(JsonConvert.SerializeObject(requiredData));
-
+                    channel.ReqContent = JsonConvert.SerializeObject(requiredData);
+                    var requirements = datahelper.GetRequiredList(channel.ReqContent);
+                    
                     _mongoOperations.AddMultipleToCollection("Required Fields", requiredData);
 
                     #endregion
