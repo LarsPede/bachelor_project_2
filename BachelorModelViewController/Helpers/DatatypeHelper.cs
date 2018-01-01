@@ -265,17 +265,17 @@ namespace BachelorModelViewController.Helpers
             return result;
         }
 
-        public List<BsonDocument> GetRequired(string content, string requirements)
+        public string GetRequired(string content, string requirements)
         {
            
 
             if (string.IsNullOrEmpty(requirements))
             {
-                return new List<BsonDocument>();
+                return null;
             }
 
             var jContent = JObject.Parse(content)["value"];
-            var jReq = JObject.Parse(requirements)["requiredKeys"];
+            var jReq = JObject.Parse(requirements)["required"];
             var jRes = new JObject();
             string name = "";
             string type = "";
@@ -318,16 +318,16 @@ namespace BachelorModelViewController.Helpers
 
             string json = JsonConvert.SerializeObject(setup);
             
-            BsonArray bsonItem = BsonSerializer.Deserialize<BsonArray>(json);
+            //BsonArray bsonItem = BsonSerializer.Deserialize<BsonArray>(json);
 
-            List<BsonDocument> somehting2 = new List<BsonDocument>();
+            //List<BsonDocument> somehting2 = new List<BsonDocument>();
 
-            foreach (var i in bsonItem)
-            {
-                somehting2.Add(i.AsBsonDocument);
-            }
+            //foreach (var i in bsonItem)
+            //{
+            //    somehting2.Add(i.AsBsonDocument);
+            //}
 
-            return somehting2;
+            return json;
         }
 
         public List<Requirement> GetRequiredList(string s)

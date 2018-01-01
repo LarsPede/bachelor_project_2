@@ -212,10 +212,11 @@ namespace BachelorModelViewController.Controllers
                     channel.Content = model.JsonContentAsString;
 
                     var requiredData = datahelper.GetRequired(model.JsonContentAsString, model.JsonRequiredKeys);
-                    channel.ReqContent = JsonConvert.SerializeObject(requiredData);
-                    var requirements = datahelper.GetRequiredList(channel.ReqContent);
+                    var req = JsonConvert.SerializeObject(requiredData);
+                    channel.ReqContent = req;
+                    //var requirements = datahelper.GetRequiredList(channel.ReqContent);
                     
-                    _mongoOperations.AddMultipleToCollection("Required Fields", requiredData);
+                    //_mongoOperations.AddMultipleToCollection("Required Fields", requiredData);
 
                     #endregion
 
