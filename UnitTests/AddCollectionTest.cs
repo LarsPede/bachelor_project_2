@@ -25,7 +25,7 @@ namespace UnitTests
         {
             var result = _mongoOperations.CreateCollection(value).Result;
             _mongoOperations.DeleteCollection(value);
-            Assert.IsTrue(result, $"{value} has been created");
+            Assert.IsTrue(result, $"{value} has been created, and then deleted");
         }
     }
 }
