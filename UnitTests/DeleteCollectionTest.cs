@@ -1,4 +1,4 @@
-using BachelorModelViewController.Data;
+﻿using BachelorModelViewController.Data;
 using BachelorModelViewController.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTests
 {
     [TestClass]
-    public class CollectionExistsTest
+    class DeleteCollectionTest
     {
         private MongoOperations _mongoOperations;
 
@@ -21,17 +21,11 @@ namespace UnitTests
 
         [DataTestMethod]
         [DataRow("Unit Test Collection")]
-        [DataRow("Collection Name That Would Never Exist")]
-        public void CollectionExistsMethod(string value)
+        public void DeleteCollectionMethod(string value)
         {
-            var result = _mongoOperations.CollectionExists(value);
-            if (result == false)
-            {
-                Assert.IsFalse(result, $"{value} is not a valid collection");
-            } else
-            {
-                Assert.IsTrue(result, $"{value} is a valid collection");
-            }
+            var result = _mongoOperations.DeleteCollection(value);
+            _mongoOperations.CreateCollection(value);
+            Assert.IsTrue(result, $"{value} has been deleted, and then created");
         }
     }
 }
