@@ -161,7 +161,7 @@ namespace BachelorModelViewController.Controllers
         // POST: Channel/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(CreateViewModel model)
+        public ActionResult Create(CreateViewModel model) 
         {
             try
             {

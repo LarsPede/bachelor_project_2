@@ -59,6 +59,7 @@ namespace BachelorModelViewController.Controllers
                 return Json(new { message = e.Message });
             }
         }
+
         private List<BsonDocument> GetAllFromCollectionInternal(string collectionName)
         {
             if (_mongoOperations.CollectionExists(collectionName))
