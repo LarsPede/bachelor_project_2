@@ -113,12 +113,12 @@ namespace BachelorModelViewController.Controllers
                 {
                     var adminRole = await _roleManager.FindByNameAsync("Administrator");
                     var supplierRole = await _roleManager.FindByNameAsync("Supplier");
-                    if (_context.Associations.Where(x => x.UserId == currentUser.Id && x.RoleId == adminRole.Id).Any())
+                    if (_context.Associations.Where(x => x.UserId == currentUser.Id && x.RoleId == adminRole.Id && x.GroupId == details.Channel.GroupId).Any())
                     {
                         details.EditAccess = true;
                         details.PushAccess = true;
                     }
-                    else if (_context.Associations.Where(x => x.UserId == currentUser.Id && x.RoleId == supplierRole.Id).Any())
+                    else if (_context.Associations.Where(x => x.UserId == currentUser.Id && x.RoleId == supplierRole.Id && x.GroupId == details.Channel.GroupId).Any())
                     {
                         details.PushAccess = true;
                     }
@@ -213,7 +213,7 @@ namespace BachelorModelViewController.Controllers
 
                     var requirements = datahelper.GetRequiredList(JsonConvert.SerializeObject(requiredData));
 
-                    _mongoOperations.AddMultipleToCollection("RequiredFields", requiredData);
+                    _mongoOperations.AddMultipleToCollection("Required Fields", requiredData);
 
                     #endregion
 
